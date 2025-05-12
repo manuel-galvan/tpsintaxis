@@ -1,5 +1,7 @@
 import string
 
+import string
+cadena=''
 def CarASimb(car):
     num=('0','1','2','3','4','5','6','7','8','9')
     match car:
@@ -9,15 +11,25 @@ def CarASimb(car):
             return 1
         case '-':
             return 2
+        case '"':
+            return 3
+        case '.':
+            return 4
+        case '_':
+            return 5
+        case _:
+            return 6
 
-def esIdentificador(cadena):
-    F=[1]
+def esReal(cadena):
+    F=[2,5]
     EstadoActual=0
     Delta=[
-     [1,2,2],
-     [1,1,1],
-     [2,2,2],
-     [1,1,2],
+     [4,2,1,4,3,4,4],
+     [4,2,4,4,3,4,4],
+     [4,2,4,4,3,4,4],
+     [4,2,4,4,4,4,4],
+     [4,4,4,4,4,4,4],
+     [4,5,4,4,4,4,4]
     ]
     for caracter in range(len(cadena)):
         EstadoActual=Delta[EstadoActual][CarASimb(cadena[caracter])]
@@ -29,7 +41,7 @@ def esIdentificador(cadena):
 
 
 nom=input ('Cadena: ')
-val=esIdentificador(nom)
+val=esReal(nom)
 if val==True:
     print('Valido')
 else:
