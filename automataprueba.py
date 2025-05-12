@@ -24,12 +24,19 @@ def esReal(cadena):
     F=[2,5]
     EstadoActual=0
     Delta=[
+<<<<<<< HEAD
      [4,2,1,4,3,4,4],
      [4,2,4,4,3,4,4],
      [4,2,4,4,3,4,4],
      [4,2,4,4,4,4,4],
      [4,4,4,4,4,4,4],
      [4,5,4,4,4,4,4]
+=======
+     [1,2,2],
+     [1,1,3],
+     [2,2,2],
+     [1,1,2],
+>>>>>>> eb05a64eab0d3921dfb044096d727d176fddb56d
     ]
     for caracter in range(len(cadena)):
         EstadoActual=Delta[EstadoActual][CarASimb(cadena[caracter])]
