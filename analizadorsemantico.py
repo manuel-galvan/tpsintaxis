@@ -1,4 +1,3 @@
-'''
 import pandas as pd
 import analizadorsintactico as sintactico
 import anytree as at
@@ -282,4 +281,4 @@ def evalCond2(arbol,estado):
     evalExparit(arbol.children[2],estado)
   elif arbol.children[0].name=='llaveizq':
     evalCondicion(arbol.children[1],estado)
-'''
+
