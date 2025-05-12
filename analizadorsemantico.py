@@ -1,3 +1,4 @@
+'''
 import pandas as pd
 import analizadorsintactico as sintactico
 import anytree as at
@@ -271,7 +272,7 @@ def evalAux7(arbol,estado):
     pass
   else:
   	evalCond1(arbol.children[1],estado)
-  
+#*  
 #<COND2>::= ‘not’ <COND2> | <ExpArit> ‘opRelacional’ <ExpArit> | ‘{‘ <Condicion> ‘}’
 def evalCond2(arbol,estado):
   if arbol.children[0].name=='not':
@@ -281,3 +282,4 @@ def evalCond2(arbol,estado):
     evalExparit(arbol.children[2],estado)
   elif arbol.children[0].name=='llaveizq':
     evalCondicion(arbol.children[1],estado)
+'''
