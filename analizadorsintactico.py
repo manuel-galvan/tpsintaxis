@@ -85,8 +85,7 @@ if __name__ == "__main__":
     texto = texto.lower()
     arbol = analizadorSintactico(texto)
     if arbol:
-        print(at.RenderTree(arbol.children[3].name, style=at.DoubleStyle()).by_attr())
-        print(arbol.name)
+        print(at.RenderTree(arbol, style=at.DoubleStyle()).by_attr())
         #print(at.RenderTree(arbol, style=at.DoubleStyle)) Para ver el lexema y etc
     else:
         print("El árbol no se ha construido correctamente.")
