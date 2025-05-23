@@ -1,4 +1,4 @@
-import pandas as pd
+import os
 import analizadorsintactico as sintactico
 import anytree as at
 import numpy as np
@@ -18,8 +18,9 @@ def asignarReal(arbol,estado):
 	if not(var in variables):
 		variables.append(var)	 
 
-def asignarMatriz(arbol, fila, columna):
-  fila = trunc(fila)
+def asignarMatriz(arbol, estado):
+  print(at.RenderTree(arbol, style=at.DoubleStyle)) # Para ver el lexema y etc
+  print(arbol.children[1].name)
   columna = trunc(columna)
   if (fila <= 300) and (columna <= 300):
     matriz = estado
@@ -40,7 +41,7 @@ def asignarMatriz(arbol, fila, columna):
             valor.append(col)
         valor = np.matrix(valor)
     matriz.valor = valor
-    variables.append(matriz)
+    estado.append(matriz)
   else:
      raise Exception('El tamaño maximo que una matriz puede tener es de 300 x 300')
   
@@ -58,16 +59,15 @@ def evalPrograma(arbol,estado):
 
 #<EspacioVariables>::= 'id' '=' <Variable> <EV1>
 def evalEspacioVariables(arbol, estado):
-  tipo = evalVariable(arbol.children[2].children[0],estado)
-  if (tipo == 'real'):
-#  if (arbol.children[2].children[0].lexema == 'tiporeal'):
+  tipo = arbol.children[2].children[0].lexema
+  if (arbol.children[2].children[0] == 'real'):
     var = elemEstado(arbol.children[0].lexema, 'real', 0)
-    estado.append(var) 
+    estado.append(var)
+  elif (tipo == '['):
+    asignarMatriz(arbol.children[2], estado)
+  if (arbol.children[4].children[0] != 'epsilon'):
+    evalEspacioVariables(arbol.children[4], estado) 
 
-  '''
-  evalVariable(arbol.children[2],estado,arbol.children[0].name) #puntero id nombre
-  evalEV1(arbol.children[3],estado)
-  '''
 
 #<EV1>::= <EspacioVariables> |  epsilon
 def evalEV1(arbol,estado):
@@ -207,7 +207,7 @@ def evalEAR2(arbol,estado):
 
 #<sub3>::= ‘^’ <EAR2> | epsilon
 def evalSub(arbol,estado,res,op1):
-  if arbol.children[1].name == 'potencia'
+  if arbol.children[1].name == 'potencia':
     evalEar2(arbol.children[1],estado,res,op2)
     op1 = op1 ** op2
   elif arbol.children[0].name == 'epsilon':
@@ -319,7 +319,16 @@ def evalCond2(arbol,estado):
   elif arbol.children[0].name=='llaveizq':
     evalCondicion(arbol.children[1],estado)
 
-def AnalizadorSemantico(arbol):
+def analizadorSemantico(arbol):
   estado = []
   evalPrograma(arbol, estado)
+
+if __name__ == "__main__":
+  script_dir = os.path.dirname(__file__)
+  file_path = os.path.join(script_dir, 'Codigo.txt')
+  texto = open(file_path).read()
+  texto = texto.lower()
+  arbol = sintactico.analizadorSintactico(texto)
+  if arbol:
+    analizadorSemantico(arbol)
 
