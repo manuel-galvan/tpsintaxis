@@ -13,36 +13,17 @@ terminales = ['program','id','asignar','tiporeal','corcheteizq','corcheteder','c
     'parentesisder','transpose','size','menos','and','potencia','dividir','multiplicacion','suma','igual','cadena','oprelacional']
 def analizadorSintactico(texto):
     poss = 0
-    ccomplex = ''
     script_dir = os.path.dirname(__file__)
     csv_path = os.path.join(script_dir, 'TAS-Minus.csv')
     df = pd.read_csv(csv_path) #Por si no arranca
     df.set_index('Unnamed: 0', inplace=True)
     pesos = at.Node('pesos') # pesos del arbol es programa
     programa = at.Node('programa')
-    pila = []
-    pila.append(pesos)
-    pila.append(programa)
-    print('pesos: ', pesos)
-    print('programa: ', programa)
-    i = 0
-    n = 0
-    print(texto, '\n')
+    pila = [pesos, programa]
     texto, ccomplex, poss, llexema = lexico.sigCompLex(texto, poss)
     while (ccomplex != 'pesos') and (ccomplex != 'error'):
-        n += 1
-#        print("\n", n)
         nodoPila = pila.pop()
         nombreNodo = nodoPila.name
-#        print('columna: ', ccomplex)
-#        print('fila: ', nombreNodo)
-#        print('nodo: ', nodoPila.name)
-        pila2=pila
-#        print('     pila    ')
-#        for k in pila2:
-#            print(k.name)
-#        print('             ')
-        #print('pila: ', pila)
         if nombreNodo in variables:
             fila = nombreNodo
             columna = ccomplex[1:]
@@ -52,16 +33,15 @@ def analizadorSintactico(texto):
             else:
                 cTas=str(celdaTAS).split()
                 tam = len(cTas) - 1
-                for i in range(len(cTas)): # El arbol esta bien
+                for i in range(len(cTas)):
                     aux = cTas[i]
                     naux = at.Node(aux, parent=nodoPila)
-                    naux.complex = ccomplex
-                    naux.lexema = llexema
                 for j in range(len(cTas)):
-                    pila.append(nodoPila.children[tam-j])
-                    
+                    pila.append(nodoPila.children[tam-j])      
         elif nombreNodo in terminales:            
             if nombreNodo == ccomplex[1:]:
+                nodoPila.lexema = llexema
+                nodoPila.complex = ccomplex
                 texto, ccomplex, poss, llexema = lexico.sigCompLex(texto, poss)
             else:
                 ccomplex = 'error'
@@ -78,6 +58,7 @@ def analizadorSintactico(texto):
             print('Analisis sintactico correcto')    
     return  programa
 
+
 if __name__ == "__main__":
     script_dir = os.path.dirname(__file__)
     file_path = os.path.join(script_dir, 'Codigo.txt')
@@ -85,8 +66,7 @@ if __name__ == "__main__":
     texto = texto.lower()
     arbol = analizadorSintactico(texto)
     if arbol:
-        print(at.RenderTree(arbol.children[3].name, style=at.DoubleStyle()).by_attr())
-        print(arbol.name)
-        #print(at.RenderTree(arbol, style=at.DoubleStyle)) Para ver el lexema y etc
+        #print(at.RenderTree(arbol, style=at.DoubleStyle()).by_attr())
+        print(at.RenderTree(arbol, style=at.DoubleStyle)) # Para ver el lexema y etc
     else:
         print("El árbol no se ha construido correctamente.")
