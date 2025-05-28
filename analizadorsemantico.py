@@ -13,9 +13,6 @@ class elemEstado:# es necesario agregar lexema?
     self.fila = fila
     self.columna = columna
 
-
-
-
 def asignarMatriz(arbol, estado, nombre):
   fila = int(arbol.children[1].lexema)
   columna = int(arbol.children[3].lexema)
@@ -52,7 +49,7 @@ def evalEspacioVariables(arbol, estado):
     estado.append(var)
   elif (tipo == '['):
     asignarMatriz(arbol.children[2], estado, arbol.children[0].lexema)
-  if (arbol.children[3].is_root):
+  if (arbol.children[3].children[0].name != 'epsilon'):
     evalEspacioVariables(arbol.children[3].children[0], estado) 
 
 
@@ -138,10 +135,12 @@ def evalMientras(arbol, estado):
   
 #<Asignacion>::= 'id' <aux3>
 def evalAsignacion(arbol,estado):
-  evalAux3(arbol.children[1],estado)
+  nombre = arbol.children[0].lexema
+  evalAux3(arbol.children[1],estado, nombre) 
 #<aux3> ::=  '=' <ExpArit> | ‘[‘ <ExpArit> ‘,’ <ExpArit> ‘]’ ‘=’ <ExpArit>
 def evalAux3(arbol,estado):
-  if arbol.children[0].name == 'igual': #era igual o asignacion?
+  if arbol.children[0].lexema == '=':  
+    res = 0
     evalExpArit(arbol.children[1],estado,res)
     asignarVar(variable,resultado)
   elif arbol.children[0].name == 'corcheteizq':
