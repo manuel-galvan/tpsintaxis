@@ -57,26 +57,19 @@ def evalPrograma(arbol,estado):
 #<EspacioVariables>::= 'id' '=' <Variable> <EV1>
 
 def evalEspacioVariables(arbol, estado):
-  if arbol.children:
+  if not(arbol.is_leaf):
     idVar = arbol.children[0].lexema
     evalVariable(arbol.children[2],estado,idVar)
     evalEV1(arbol.children[3],estado)
-'''  tipo = arbol.children[2].children[0].lexema
-  if (arbol.children[2].children[0] == 'real'):
-    asignarReal(arbol,estado)
-  elif (tipo == '['):
-    asignarMatriz(arbol.children[2], estado, arbol.children[0].lexema)
-  if (arbol.children[3].name != 'epsilon'):
-    evalEV1(arbol.children[3], estado) '''
+
 
 
 #<EV1>::= <EspacioVariables> |  epsilon
 def evalEV1(arbol,estado):
-  if arbol.children[0].name == 'epsilon':
-    pass
-  else:
-    pp = arbol.children
+  if arbol.is_root:
     evalEspacioVariables(arbol.children[0],estado)
+  else:
+    pass
     
 #<Variable>::= ‘TipoReal' | ‘[‘ ‘constanteReal’ ‘,’ ‘constanteReal’ ‘]’ 
 def evalVariable(arbol,estado,idVar):
@@ -91,7 +84,7 @@ def evalCuerpo(arbol,estado):
 
 #<Cuerpo2>::= <Sentencia> <aux1>
 def evalCuerpo2(arbol,estado):
-  if arbol.children:
+  if not(arbol.is_leaf):
     evalSentencia(arbol.children[0],estado)
     evalAux1(arbol.children[1],estado)
 #<aux1>::= <Cuerpo2> | epsilon 
@@ -102,15 +95,15 @@ def evalAux1(arbol,estado):
     evalCuerpo2(arbol.children[0],estado)
 #<Sentencia>::= <Asignacion> | <Lectura> | <Escritura> | <Si> | <Mientras>
 def evalSentencia(arbol,estado):
-  if arbol.name == 'asignacion':
+  if arbol.children[0].name == 'asignacion':
     evalAsignacion(arbol.children[0],estado)
-  elif arbol.name == 'lectura':
+  elif arbol.children[0].name == 'lectura':
     evalLectura(arbol.children[0],estado)
-  elif arbol.name == 'escritura':
+  elif arbol.children[0].name == 'escritura':
     evalEscritura(arbol.children[0],estado)
-  elif arbol.name == 'si':
+  elif arbol.children[0].name == 'si':
     evalSi(arbol.children[0],estado)
-  elif arbol.name == 'mientras':
+  elif arbol.children[0].name == 'mientras':
     evalMientras(arbol.children[0],estado)
 #<Lectura>::= 'peek’ ‘(' 'cadena' ',' 'id’ ’)'
 def evalLectura(arbol, estado):
@@ -152,16 +145,22 @@ def evalMientras(arbol, estado):
         # Re-evaluar la condición después de ejecutar el cuerpo
         valor = evalCondicion(arbol.children[1], estado)
 
+def modificarVariable(estado, nombre, valor):
+  for variable in estado:
+    if variable.id == nombre:
+      variable.valor = valor
+     
+  
   
 #<Asignacion>::= 'id' <aux3>
 def evalAsignacion(arbol,estado):
   nombre = arbol.children[0].lexema
   evalAux3(arbol.children[1],estado, nombre) 
 #<aux3> ::=  '=' <ExpArit> | ‘[‘ <ExpArit> ‘,’ <ExpArit> ‘]’ ‘=’ <ExpArit>
-def evalAux3(arbol,estado):
+def evalAux3(arbol,estado, nombre):
   if arbol.children[0].lexema == '=':  
-    res = 0
-    evalExpArit(arbol.children[1],estado,res)
+    res = evalExpArit(arbol.children[1],estado)
+    modificarVariable(estado, nombre, res)
     #asignarVar(variable,resultado)
   elif arbol.children[0].name == 'corcheteizq':
     evalExpArit(arbol.children[1],estado)
@@ -193,6 +192,7 @@ def evalSub1(arbol,estado,op1):
 def evalEAR1(arbol,estado):
   op1 = evalEAR2(arbol.children[0],estado)
   res = evalSub2(arbol.children[1],estado,op1)
+  return res
 #<sub2>::= ‘*’ <EAR1> | ‘/’ <EAR1> | epsilon
 def evalSub2(arbol,estado,res,op1):
   if arbol.children[0].name == 'multiplicacion':
@@ -210,19 +210,24 @@ def evalSub2(arbol,estado,res,op1):
 def evalEAR2(arbol,estado):
   op1 = evalEAR3(arbol.children[0],estado)
   res = evalSub3(arbol.children[1],estado,op1)
+  return res
+
 
 #<sub3>::= ‘^’ <EAR2> | epsilon
 def evalSub3(arbol,estado,res,op1):
+  op1 = int(op1.lexema)
   if arbol.children[1].name == 'potencia':
-    op2 = evalEAR2(arbol.children[1],estado,res)
+    op2 = int((evalEAR2(arbol.children[1],estado,res)).lexema)
     op1 = op1 ** op2
     return op1
   elif arbol.children[0].name == 'epsilon':
     return op1
     
 #<EAR3>::= '('<ExpArit>')' |  'Transpose’ ‘(' <ExpArit> ')' | 'Size’ ‘(' <ExpArit> ',' 'constantereal' ')' | ‘id’ <EAR4> | ‘ConstanteReal’ | ‘-’<EAR3> | <constanteMatriz>
-# EAR3 --> ‘ConstanteReal’ no se puede hacer o no se como?
-def evalEAR3(arbol,estado,res,op1):
+
+def evalEAR3(arbol,estado):
+  if arbol.children[0].name == 'constantereal':
+    return arbol.children[0]
   if arbol.children[1].name =='exparit':
     evalExpArit(arbol.children[1],estado)
   elif arbol.children[0].name == 'size':
@@ -334,7 +339,9 @@ if __name__ == "__main__":
   texto = open(file_path).read()
   texto = texto.lower()
   arbol = sintactico.analizadorSintactico(texto)
-  
   if arbol:
-    print(analizadorSemantico(arbol))
+    est = analizadorSemantico(arbol)
+    for elemento in est:
+      print(f'nombre= {elemento.id}')
+      print(f'valor= {elemento.valor}')
     
