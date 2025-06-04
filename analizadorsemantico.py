@@ -1,6 +1,6 @@
 import os
 import pandas as pd
-import analizadorsintactico as sintactico
+import analizadorSintactico as sintactico
 import anytree as at
 import numpy as np
 # estado es lo que usamos como variables 
@@ -13,24 +13,37 @@ class elemEstado:# es necesario agregar lexema?
     self.fila = fila
     self.columna = columna
 
+def analizadorSemantico(arbol):
+  estado = []
+  evalPrograma(arbol, estado)
+  return estado
+
+def asignarReal(arbol,estado,idVar):
+  var = elemEstado(idVar, 'real', 0)
+  estado.append(var)
+
 def asignarMatriz(arbol, estado, nombre):
   fila = int(arbol.children[1].lexema)
   columna = int(arbol.children[3].lexema)
   if (fila <= 300 and fila >= 1) and (columna <= 300 and columna >= 1):
     valor = []
-      while len(valor) < fila:
-          col = []
-          while len(col) < columna:
-              col.append(0)
-          valor.append(col)
-      valor = np.matrix(valor)
+    while len(valor) < fila:
+        col = []
+        while len(col) < columna:
+            col.append(0)
+        valor.append(col)
+    valor = np.matrix(valor)
     matriz = elemEstado(nombre, 'matriz', valor, fila, columna)
     estado.append(matriz)
   else:
      raise Exception('El tamaño maximo que una matriz puede tener es de 300 x 300')
   
+def modificarReal(arbol,estado):
+  pass
 
-	
+def modificarMatriz():
+  pass
+
 def obtenerVar(arbol,estado,tipo,fil,col):
   pass
   
@@ -42,38 +55,45 @@ def evalPrograma(arbol,estado):
   evalCuerpo(arbol.children[3],estado)
 
 #<EspacioVariables>::= 'id' '=' <Variable> <EV1>
+
 def evalEspacioVariables(arbol, estado):
-  tipo = arbol.children[2].children[0].lexema
+  if arbol.children:
+    idVar = arbol.children[0].lexema
+    evalVariable(arbol.children[2],estado,idVar)
+    evalEV1(arbol.children[3],estado)
+'''  tipo = arbol.children[2].children[0].lexema
   if (arbol.children[2].children[0] == 'real'):
-    var = elemEstado(arbol.children[0].lexema, 'real', 0)
-    estado.append(var)
+    asignarReal(arbol,estado)
   elif (tipo == '['):
     asignarMatriz(arbol.children[2], estado, arbol.children[0].lexema)
-  if (arbol.children[3].children[0].name != 'epsilon'):
-    evalEspacioVariables(arbol.children[3].children[0], estado) 
+  if (arbol.children[3].name != 'epsilon'):
+    evalEV1(arbol.children[3], estado) '''
 
 
 #<EV1>::= <EspacioVariables> |  epsilon
 def evalEV1(arbol,estado):
-  if arbol.name == 'epsilon':
+  if arbol.children[0].name == 'epsilon':
     pass
   else:
-    evalVariable(arbol.children[0],estado)
+    pp = arbol.children
+    evalEspacioVariables(arbol.children[0],estado)
     
 #<Variable>::= ‘TipoReal' | ‘[‘ ‘constanteReal’ ‘,’ ‘constanteReal’ ‘]’ 
-def evalVariable(arbol,estado):
-  if arbol[0].lexema == 'tiporeal':
-     asignarReal(arbol, estado)
-  elif arbol=='corcheteizq':
-    asignarMatriz(arbol, estado)
-  
+def evalVariable(arbol,estado,idVar):
+  if arbol.children[0].lexema == 'real':
+    asignarReal(arbol, estado,idVar)
+  elif arbol.children[0].lexema =='[':
+    asignarMatriz(arbol, estado,idVar)
+
 #<Cuerpo>:: '{'<Cuerpo2>’}’
 def evalCuerpo(arbol,estado):
   evalCuerpo2(arbol.children[1],estado)
+
 #<Cuerpo2>::= <Sentencia> <aux1>
 def evalCuerpo2(arbol,estado):
-  evalSentencia(arbol.children[0],estado)
-  evalAux1(arbol.children[1],estado)
+  if arbol.children:
+    evalSentencia(arbol.children[0],estado)
+    evalAux1(arbol.children[1],estado)
 #<aux1>::= <Cuerpo2> | epsilon 
 def evalAux1(arbol,estado):
   if arbol.name == 'epsilon':
@@ -115,7 +135,7 @@ def evalAux2(arbol,estado):
 #<VarLista>::= 'cadena' | <ExpArit>  }
 def evalVarLista(arbol,estado):
   if arbol.name == 'exparit':
-    val = evalExparit(arbol.children[0],estado)
+    val = evalExpArit(arbol.children[0],estado)
   elif arbol.name == 'cadena':
      pass
     
@@ -142,10 +162,10 @@ def evalAux3(arbol,estado):
   if arbol.children[0].lexema == '=':  
     res = 0
     evalExpArit(arbol.children[1],estado,res)
-    asignarVar(variable,resultado)
+    #asignarVar(variable,resultado)
   elif arbol.children[0].name == 'corcheteizq':
-    evalExpArit(arbol.children[1],estado,fil)
-    evalExpArit(arbol.children[3],estado,col)
+    evalExpArit(arbol.children[1],estado)
+    evalExpArit(arbol.children[3],estado)
     evalExpArit(arbol.children[5],estado,res)
 
 #<ExpArit>::= <EAR1> <sub1> 
@@ -192,26 +212,27 @@ def evalEAR2(arbol,estado):
   res = evalSub3(arbol.children[1],estado,op1)
 
 #<sub3>::= ‘^’ <EAR2> | epsilon
-def evalSub(arbol,estado,res,op1):
+def evalSub3(arbol,estado,res,op1):
   if arbol.children[1].name == 'potencia':
-    evalEar2(arbol.children[1],estado,res,op2)
+    op2 = evalEAR2(arbol.children[1],estado,res)
     op1 = op1 ** op2
+    return op1
   elif arbol.children[0].name == 'epsilon':
-    res = op1
+    return op1
+    
 #<EAR3>::= '('<ExpArit>')' |  'Transpose’ ‘(' <ExpArit> ')' | 'Size’ ‘(' <ExpArit> ',' 'constantereal' ')' | ‘id’ <EAR4> | ‘ConstanteReal’ | ‘-’<EAR3> | <constanteMatriz>
 # EAR3 --> ‘ConstanteReal’ no se puede hacer o no se como?
 def evalEAR3(arbol,estado,res,op1):
   if arbol.children[1].name =='exparit':
-    evalExparit(arbol.children[1],estado)
-  elif arbol.children[2].name == 'exparit':
-    if arbol.children[2].name == 'coma':# si consideramos a las variables no hay que las distinga
-      evalExparit(arbol.children[2],estado)
-    else:
-    	evalExparit(arbol.children[2],estado)
+    evalExpArit(arbol.children[1],estado)
+  elif arbol.children[0].name == 'size':
+    evalExpArit(arbol.children[2],estado)
+  elif arbol.children[0].name == 'transpose':
+    evalExpArit(arbol.children[2],estado)
   elif arbol.children[1].name == 'ear4':
-    evalEar4(arbol.children[1],estado)
+    evalEAR4(arbol.children[1],estado)
   elif arbol.children[1].name == 'ear3':
-    evalEar4(arbol.children[1],estado)
+    evalEAR4(arbol.children[1],estado)
   elif arbol.children[1].name == 'constantematriz':
     evalconstanteMatriz(arbol.children[0],estado)
 #<EAR4>::= ‘[‘ <ExpArit> ‘,’ <ExpArit> ‘]’ | epsilon 
@@ -219,7 +240,7 @@ def evalEAR4(arbol,estado):
   if arbol.children[0].name == 'epsilon':
     pass
   else:
-    evalEar4(arbol.children[1],estado)
+    evalEAR4(arbol.children[1],estado)
   
 #<constanteMatriz>::= ‘[‘ <Filas> ‘]’ 
 def evalconstanteMatriz(arbol,estado):
@@ -263,17 +284,17 @@ def evalCondicion(arbol,estado):
   val = evalCond1(arbol.children[0],estado)
   res = evalAux6(arbol.children[1], estado, val)
   return res
-  '''
-  if arbol.children[1].name != 'epsilon':
-     operador = arbol.children[0].name
-     valor2 = evalCondicion(arbol.children[1].children[1], estado) 
-     if operador == 'or':
-        return (val or valor2)
-     elif operador == 'and':
-        return (val and valor2)
-  else:
-     return val 
-     '''
+
+#  if arbol.children[1].name != 'epsilon':
+#     operador = arbol.children[0].name
+#     valor2 = evalCondicion(arbol.children[1].children[1], estado) 
+#     if operador == 'or':
+#        return (val or valor2)
+#     elif operador == 'and':
+#        return (val and valor2)
+#  else:
+#     return val 
+
   
   evalAux6(arbol.children[1],estado)
 #<aux6>::= 'or' <Condicion> | epsilon
@@ -300,15 +321,12 @@ def evalCond2(arbol,estado):
   if arbol.children[0].name=='not':
     evalCond2(arbol.children[1],estado)
   elif arbol.children[0].name=='exparit':
-    evalExparit(arbol.children[0],estado)
-    evalExparit(arbol.children[2],estado)
+    evalExpArit(arbol.children[0],estado)
+    evalExpArit(arbol.children[2],estado)
   elif arbol.children[0].name=='llaveizq':
     evalCondicion(arbol.children[1],estado)
 
-def analizadorSemantico(arbol):
-  estado = []
-  evalPrograma(arbol, estado)
-  return estado
+
 
 if __name__ == "__main__":
   script_dir = os.path.dirname(__file__)
@@ -319,4 +337,4 @@ if __name__ == "__main__":
   
   if arbol:
     print(analizadorSemantico(arbol))
-
+    
