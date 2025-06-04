@@ -3,6 +3,7 @@ import pandas as pd
 import analizadorsintactico as sintactico
 import anytree as at
 import numpy as np
+# 12 3
 # estado es lo que usamos como variables 
 class elemEstado:# es necesario agregar lexema?
 # porque si se puede usar es necesario tener la raiz de parametro para: evaloperacion, asignarReal y asignarMatriz
