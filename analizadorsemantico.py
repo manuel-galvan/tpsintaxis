@@ -344,4 +344,35 @@ if __name__ == "__main__":
     for elemento in est:
       print(f'nombre= {elemento.id}')
       print(f'valor= {elemento.valor}')
-    
+  
+  
+# Traceback (most recent call last):
+#   File "c:\Users\Manu\Desktop\manolo\paiton\trabajo_practico_sintaxis\analizadorsemantico.py", line 343, in <module>
+#     est = analizadorSemantico(arbol)
+#           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+#   File "c:\Users\Manu\Desktop\manolo\paiton\trabajo_practico_sintaxis\analizadorsemantico.py", line 18, in analizadorSemantico
+#     evalPrograma(arbol, estado)
+#   File "c:\Users\Manu\Desktop\manolo\paiton\trabajo_practico_sintaxis\analizadorsemantico.py", line 55, in evalPrograma
+#     evalCuerpo(arbol.children[3],estado)
+#   File "c:\Users\Manu\Desktop\manolo\paiton\trabajo_practico_sintaxis\analizadorsemantico.py", line 83, in evalCuerpo
+#     evalCuerpo2(arbol.children[1],estado)
+#   File "c:\Users\Manu\Desktop\manolo\paiton\trabajo_practico_sintaxis\analizadorsemantico.py", line 88, in evalCuerpo2
+#     evalSentencia(arbol.children[0],estado)
+#   File "c:\Users\Manu\Desktop\manolo\paiton\trabajo_practico_sintaxis\analizadorsemantico.py", line 99, in evalSentencia
+#     evalAsignacion(arbol.children[0],estado)
+#   File "c:\Users\Manu\Desktop\manolo\paiton\trabajo_practico_sintaxis\analizadorsemantico.py", line 158, in evalAsignacion
+#     evalAux3(arbol.children[1],estado, nombre)
+#     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+#   File "c:\Users\Manu\Desktop\manolo\paiton\trabajo_practico_sintaxis\analizadorsemantico.py", line 162, in evalAux3        
+#     res = evalExpArit(arbol.children[1],estado)
+#           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+#   File "c:\Users\Manu\Desktop\manolo\paiton\trabajo_practico_sintaxis\analizadorsemantico.py", line 172, in evalExpArit     
+#     op1 = evalEAR1(arbol.children[0],estado)
+#           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+#   File "c:\Users\Manu\Desktop\manolo\paiton\trabajo_practico_sintaxis\analizadorsemantico.py", line 193, in evalEAR1        
+#     op1 = evalEAR2(arbol.children[0],estado)
+#           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+#   File "c:\Users\Manu\Desktop\manolo\paiton\trabajo_practico_sintaxis\analizadorsemantico.py", line 212, in evalEAR2        
+#     res = evalSub3(arbol.children[1],estado,op1)
+#           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+# TypeError: evalSub3() missing 1 required positional argument: 'op1'
