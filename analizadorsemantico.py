@@ -1,6 +1,6 @@
 import os
 import pandas as pd
-import analizadorSintactico as sintactico
+import analizadorsintactico as sintactico
 import anytree as at
 import numpy as np
 # estado es lo que usamos como variables 
