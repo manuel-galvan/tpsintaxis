@@ -1,0 +1,8 @@
+bueno hola como les va espero que la esten pasando bien sin mi :p 
+bueno cuestion arregle el problema q tenia en los sub3, era que todas las funciones tenian res de parametro tambien
+pero hay todavia mas errores asi q para no tirarlo a la main le hice un branch, asi que nada
+este es el error
+
+p1 = op1.lexema
+
+basicamente no estaria tomando a p1 como nodo o una cosa asi, ni idea sinceramente asi q bueno nada happy coding
