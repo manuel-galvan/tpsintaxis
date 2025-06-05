@@ -1,0 +1,4 @@
+bueno hola espero q la esten pasando bien sin mi bueno cuestion hice una branch pq no queria
+romper el principal asi q nada basicamente '''solucione''' lo q pasaba con los sub3, esperaban recibir 
+res como parametro asi q nada, pero hay mas problemas dentro de los evalSub como que no toma a op1 como nodo y por
+ende no encuentra el lexema, asi q nada, happy coding
