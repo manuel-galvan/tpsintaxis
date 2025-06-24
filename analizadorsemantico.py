@@ -47,8 +47,6 @@ def modificarMatriz():
 def obtenerVar(arbol,estado,tipo,fil,col):
   pass
   
-  
-  
 #<Programa>::= 'Program' 'id' <EspacioVariables> <Cuerpo>
 def evalPrograma(arbol,estado):
   evalEspacioVariables(arbol.children[2],estado) # arbol aca tendria que ser el puntero hijo de EspacioVariable
@@ -61,8 +59,6 @@ def evalEspacioVariables(arbol, estado):
     idVar = arbol.children[0].lexema
     evalVariable(arbol.children[2],estado,idVar)
     evalEV1(arbol.children[3],estado)
-
-
 
 #<EV1>::= <EspacioVariables> |  epsilon
 def evalEV1(arbol,estado):
@@ -211,7 +207,7 @@ def evalEAR2(arbol,estado):
   evalSub3(arbol.children[1],estado,res,op1)
 #<sub3>::= ‘^’ <EAR2> | epsilon
 def evalSub(arbol,estado,res,op1):
-  if arbol.children[1].name == 'potencia'
+  if arbol.children[1].name == 'potencia':
     evalEar2(arbol.children[1],estado,res,op2)
     op1 = op1 ** op2
     return op1
@@ -251,7 +247,7 @@ def evalFilas(arbol,estado):
   evalAux4(arbol.children[3],estado)
 #<aux4>::= ‘,’ <Filas> | epsilon
 def evalAux4(arbol,estado):
-  if arbol.children[0].name=='epsilon':
+  if arbol.children[0].name =='epsilon':
     pass
   else:
     evalFilas(arbol.children[1],estado)
@@ -260,7 +256,7 @@ def evalListaNumeros(arbol,estado):
   evalAux5(arbol.children[1],estado)
 #<aux5>::= ‘,’ <listaNumeros> | epsilon
 def evalAux5(arbol,estado):
-  if arbol.children[0].name=='epsilon':
+  if arbol.children[0].name =='epsilon':
     pass
   else:
     evalListaNumeros(arbol.children[1],estado)  
