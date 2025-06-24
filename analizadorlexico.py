@@ -258,3 +258,162 @@ if __name__ == "__main__":
             #print('texto[',poss,']: ',texto[poss])
             print('\n\n')
     print(TipoSimboloGramatical)
+=======
+     [4,4,4,4,4,4,4],
+     [4,4,4,4,4,4,4]
+    ]
+    for caracter in range(len(cadena)):        
+        EstadoActual=Delta[EstadoActual][CarASimb(cadena[caracter])]
+        lexema=lexema + cadena[caracter]
+    if EstadoActual in F:
+        return (True, 'Tcadena', lexema)
+    else:
+        return (False,'',lexema)
+    
+def esReal(cadena):
+    F=[2,3]
+    EstadoActual=0
+    Delta=[
+     [4,2,1,4,4,4,4],
+     [4,2,4,4,4,4,4],
+     [4,2,4,4,3,4,4],
+     [4,3,4,4,4,4,4],
+     [4,4,4,4,4,4,4]
+    ]
+    for caracter in range(len(cadena)):
+        EstadoActual=Delta[EstadoActual][CarASimb(cadena[caracter])]
+    if EstadoActual in F:
+        return (True, 'Treal')
+    else:
+        return (False,'')
+
+def esSimbolo(car): #Toprel, Tllaveizq, Tllaveder, Tcorcheteizq, Tcorcheteder, Tcoma, Tparentesisizq, Tparentesisder, Tdospuntos, Tsuma, Tresta, Tmultiplicacion, Tdivision, Tpotencia,
+    if car == '{':
+        return (True, 'Tllaveizq')
+    elif car == '}':
+        return (True, 'Tllaveder')
+    elif car == '[':
+        return (True, 'Tcorcheteizq')
+    elif car == ']':
+        return (True, 'Tcorcheteder')
+    elif car == ',':
+        return (True, 'Tcoma')
+    elif car == '(':
+        return (True, 'Tparentesisizq')
+    elif car == ')':
+        return (True, 'Tparentesisder')
+    elif car == ':':
+        return (True, 'Tdospuntos')
+    elif car == '+':
+        return (True, 'Tsuma')
+    elif car == '-':
+        return (True, 'Tresta')
+    elif car == '*':
+        return (True, 'Tmultiplicacion')
+    elif car == '/':
+        return (True, 'Tdivision')
+    elif car == '^':
+        return (True, 'Tpotencia')
+    elif car == '=':
+        return (True, 'Tasignacion')
+    else:
+        return(False,'')
+        
+def textoaLista(texto):    
+    pal=''
+    for car in texto:
+        if car=='=':
+            textolista.append(pal)
+            textolista.append('=')
+            pal=''
+        elif car=='+':
+            textolista.append(pal)
+            textolista.append('+')
+            pal=''
+        elif car=='-':
+            textolista.append(pal)
+            textolista.append('-')
+            pal=''
+        elif car=='*':
+            textolista.append(pal)
+            textolista.append('*')
+            pal=''
+        elif car=='/':
+            textolista.append(pal)
+            textolista.append('/')
+            pal=''
+        elif car=='^':
+            textolista.append(pal)
+            textolista.append('^')
+            pal=''
+        elif car=='(':
+            textolista.append(pal)
+            textolista.append('(')
+            pal=''
+        elif car==')':
+            textolista.append(pal)
+            textolista.append(')')
+            pal=''
+        elif car=='{':
+            textolista.append(pal)
+            textolista.append('{')
+            pal=''
+        elif car=='}':
+            textolista.append(pal)
+            textolista.append('}')
+            pal=''
+        elif car=='[':
+            textolista.append(pal)
+            textolista.append('[')
+            pal=''
+        elif car==']':
+            textolista.append(pal)
+            textolista.append(']')
+            pal=''
+        elif car==':':
+            textolista.append(pal)
+            textolista.append(':')
+            pal=''
+        elif car == ' ' or car == '\n':
+            textolista.append(pal)
+            pal=''
+        else:
+            pal= pal + car
+    while '' in textolista:
+        textolista.remove('')
+        
+def listaalista(textolista):
+    for lex in textolista:
+        if esPalabraReservada(lex)[0]:
+            complexlista.append(esPalabraReservada(lex)[1])
+            
+        elif esIdentificador(lex)[0]:
+            complexlista.append(esIdentificador(lex)[1])
+            
+        elif esCadena(lex)[0]:
+            complexlista.append(esCadena(lex)[1])
+            
+        elif esReal(lex)[0]:
+           complexlista.append(esReal(lex)[1])
+            
+        elif esSimbolo(lex)[0]:
+            complexlista.append(esSimbolo(lex)[1])
+            
+        elif esPalabraReservada(lex)[0]:
+            complexlista.append(esPalabraReservada(lex)[1])
+            
+if __name__ == "__main__":
+
+
+    texto=open('Codigo.txt').read()
+    texto= texto+' '
+    textoaLista(texto)
+    listaalista(textolista)
+    for i in range(len(textolista)):
+        print(textolista[i],' : ',complexlista[i])
+
+    '''
+    vbool,vcomplex,vlex=esCadena(texto)
+    print('bool: ',vbool,'Componente Lexico: ',vcomplex,'Lexema: ',vlex)
+    '''
+>>>>>>> eb05a64eab0d3921dfb044096d727d176fddb56d

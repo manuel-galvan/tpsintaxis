@@ -66,9 +66,7 @@ def evalEspacioVariables(arbol, estado):
 
 #<EV1>::= <EspacioVariables> |  epsilon
 def evalEV1(arbol,estado):
-  if not(arbol.is_leaf):
-    evalEspacioVariables(arbol.children[0],estado)
-  else:
+  if arbol.name == 'epsilon':
     pass
     
 #<Variable>::= ‘TipoReal' | ‘[‘ ‘constanteReal’ ‘,’ ‘constanteReal’ ‘]’ 
@@ -176,8 +174,7 @@ def evalExpArit(arbol,estado):
 	# las EAR deben devolver un resultado
    
 #<sub1>::= ‘+’ <ExpArit> | ‘-’ <ExpArit> | epsilon
-def evalSub1(arbol,estado,op1):
-  op1 = int(op1.lexema)
+def evalSub1(arbol,estado,res,op1):
   if arbol.children[0].name == 'suma':
     op2 = evalExpArit(arbol.children[1],estado)
     res = op1 + op2
@@ -191,8 +188,8 @@ def evalSub1(arbol,estado,op1):
   
 #<EAR1>::= <EAR2> <sub2> 
 def evalEAR1(arbol,estado):
-  op1 = evalEAR2(arbol.children[0],estado)
-  return evalSub2(arbol.children[1],estado,op1)
+  evalEAR2(arbol.children[0],estado,res,op1)
+  evalSub2(arbol.children[1],estado,res,op1)
 #<sub2>::= ‘*’ <EAR1> | ‘/’ <EAR1> | epsilon
 def evalSub2(arbol,estado,op1):
   op1 = op1.lexema
@@ -210,16 +207,12 @@ def evalSub2(arbol,estado,op1):
   
 #<EAR2>::=  <EAR3> <sub3>
 def evalEAR2(arbol,estado):
-  op1 = evalEAR3(arbol.children[0],estado)
-  return evalSub3(arbol.children[1],estado,op1)
-  
+  evalEAR3(arbol.children[0],estado,res,op1)
+  evalSub3(arbol.children[1],estado,res,op1)
 #<sub3>::= ‘^’ <EAR2> | epsilon
-def evalSub3(arbol,estado,op1):
-  op1 = op1.lexema
-  op1 = int(op1)
-  if arbol.children[0].name == 'potencia':
-    op2 = evalEAR2(arbol.children[1],estado).lexema
-    op2 = int(op2)
+def evalSub(arbol,estado,res,op1):
+  if arbol.children[1].name == 'potencia'
+    evalEar2(arbol.children[1],estado,res,op2)
     op1 = op1 ** op2
     return op1
   elif arbol.children[0].name == 'epsilon':

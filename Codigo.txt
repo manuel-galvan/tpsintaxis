@@ -1,4 +1,20 @@
 Program Basta_xfabor
-enum = real
-matrix = [3 , 3] 
+num = real
 num1 = real
+num2 = real
+matrix = [3 , 3] 
+{
+peek( "hola buenas" , hola)
+dump("hola") 
+if num > 2 and num < 5:
+{num1=1}
+elif {not{num == 5}}:
+{num1=2}
+else:
+{num1=3}
+matrix = [[1,2,3],[4,5,6],[7,8,9]]
+while num ==2 or num==5:
+{num=num+1}
+pepe=size(matrix[3,3] , 2)
+pepe2=transpose(matrix[3,3])
+}
