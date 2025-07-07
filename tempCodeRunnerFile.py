@@ -1,1 +1,1 @@
-g
+lexema

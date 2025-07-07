@@ -1,3 +1,5 @@
 Program Basta_xfabor
 num = real
-matrix = [3 , 3] 
+{
+peek ('holaaaa', num)
+}

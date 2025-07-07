@@ -16,10 +16,10 @@ def recuperarEstado(id, estado):
   i = 0
   while i < len(estado):
     if estado[i].id == id:
-      return estado[i]
+      return i
     else:
       i += 1
-  return 0
+  return -1
 
 def analizadorSemantico(arbol):
   estado = []
@@ -113,7 +113,15 @@ def evalSentencia(arbol,estado):
     evalMientras(arbol.children[0],estado)
 #<Lectura>::= 'peek’ ‘(' 'cadena' ',' 'id’ ’)'
 def evalLectura(arbol, estado):
-  valEscribir = input(arbol.children[2].lexema) 
+  fallo = False
+  id
+  valEscribir = input(arbol.children[2].lexema)
+  try:
+    valEscribir = float(valEscribir)
+  except:
+    fallo = True
+  if not(Fallo):
+    i = recuperarEstado()
   #estado.asignarValor(arbol.children[4].lexema, valEscribir)
   #asigno a la variable a la que id haga referencia el valor de valEscribir
   #ciertaFuncion(estado,arbol.children[4],valEscribir)   #guardar el valor de id en estado

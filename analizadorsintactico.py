@@ -40,8 +40,8 @@ def analizadorSintactico(texto):
                     pila.append(nodoPila.children[tam-j])      
         elif nombreNodo in terminales:            
             if nombreNodo == ccomplex[1:]:
-                nodoPila.lexema = llexema
-                nodoPila.complex = ccomplex
+                nodoPila.lexema = llexema       # Guardamos el lexema general
+                nodoPila.complex = ccomplex     # Guardamos la categoría gramatical
                 texto, ccomplex, poss, llexema = lexico.sigCompLex(texto, poss)
             else:
                 ccomplex = 'error'
@@ -51,12 +51,7 @@ def analizadorSintactico(texto):
             ccomplex = 'error'
     nodoPila = pila.pop()
     nombreNodo = nodoPila.name
-   
-    if ccomplex == 'error':
-        print('Error en la linea: ', llexema)
-    elif (nombreNodo == 'pesos') and (ccomplex == 'pesos'):
-            print('Analisis sintactico correcto')    
-    return  programa
+    return  programa, ccomplex
 
 
 if __name__ == "__main__":
@@ -64,9 +59,9 @@ if __name__ == "__main__":
     file_path = os.path.join(script_dir, 'Codigo.txt')
     texto = open(file_path).read()
     texto = texto.lower()
-    arbol = analizadorSintactico(texto)
-    if arbol:
+    arbol, ccomplex = analizadorSintactico(texto)
+    if ccomplex == 'error':
+        print('mal')
+    else:
         #print(at.RenderTree(arbol, style=at.DoubleStyle()).by_attr())
         print(at.RenderTree(arbol, style=at.DoubleStyle)) # Para ver el lexema y etc
-    else:
-        print("El árbol no se ha construido correctamente.")
