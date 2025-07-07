@@ -98,27 +98,43 @@ def esIdentificador(cadena):
     else:
         return (False,'',0)
 def esCadena(cadena):
-    lexema=''
-    F=[5]
-    posicion=0
-    EstadoActual=0
-    Delta=[
-     [4,4,4,1,4,4,4],
-     [2,2,2,3,2,2,2],
-     [2,2,2,3,2,2,2],
-     [4,4,4,4,5,4,5],
-     [4,4,4,4,4,4,4],
-     [5,5,5,5,5,5,5]
-    ]
-    while EstadoActual not in (4,5):
-        EstadoActual=Delta[EstadoActual][CarASimb(cadena[posicion])]
-        posicion+=1
-        if posicion < len(cadena):
-            lexema=lexema + cadena[posicion]
-    if EstadoActual in F:
-        return (True, 'Tcadena', posicion-1)
-    else:
+    pos=0
+    lexema = ''
+    if cadena[pos] != "'":
+        return None, pos
+
+    pos += 1
+    inicio = pos
+    while pos < len(cadena) and cadena[pos] != "'":
+        pos += 1
+
+    if pos >= len(cadena):  # Cadena no cerrada
         return (False,'',0)
+
+    lexema = cadena[inicio:pos]  # sin comillas
+    pos += 1  # Saltar la comilla de cierre
+    return (True, 'Tcadena', pos)
+    # lexema=''
+    # F=[5]
+    # posicion=0
+    # EstadoActual=0
+    # Delta=[
+    #  [4,4,4,1,4,4,4],
+    #  [2,2,2,3,2,2,2],
+    #  [2,2,2,3,2,2,2],
+    #  [4,4,4,4,5,4,5],
+    #  [4,4,4,4,4,4,4],
+    #  [5,5,5,5,5,5,5]
+    # ]
+    # while EstadoActual not in (4,5):
+    #     EstadoActual=Delta[EstadoActual][CarASimb(cadena[posicion])]
+    #     posicion+=1
+    #     if posicion < len(cadena):
+    #         lexema=lexema + cadena[posicion]
+    # if EstadoActual in F:
+    #     return (True, 'Tcadena', posicion-1)
+    # else:
+    #     return (False,'',0)
     
 def esReal(cadena):
     F=[4]
