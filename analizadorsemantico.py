@@ -114,14 +114,19 @@ def evalSentencia(arbol,estado):
 #<Lectura>::= 'peek’ ‘(' 'cadena' ',' 'id’ ’)'
 def evalLectura(arbol, estado):
   fallo = False
-  id
-  valEscribir = input(arbol.children[2].lexema)
+  idtipo = arbol.children[3]
+  valEscribir = input(arbol.children[1].lexema)
   try:
     valEscribir = float(valEscribir)
   except:
     fallo = True
-  if not(Fallo):
-    i = recuperarEstado()
+  if not(fallo):
+    i = recuperarEstado(idtipo, estado)
+    if (i != -1):
+      estado[i].valor = valEscribir
+
+
+    
   #estado.asignarValor(arbol.children[4].lexema, valEscribir)
   #asigno a la variable a la que id haga referencia el valor de valEscribir
   #ciertaFuncion(estado,arbol.children[4],valEscribir)   #guardar el valor de id en estado
