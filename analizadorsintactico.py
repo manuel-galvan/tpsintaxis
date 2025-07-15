@@ -26,7 +26,7 @@ def analizadorSintactico(texto):
         nombreNodo = nodoPila.name
         if nombreNodo in variables:
             fila = nombreNodo
-            columna = ccomplex[1:]
+            columna = (ccomplex[1:]).lower()
             celdaTAS = df.loc[fila, columna]
             if pd.isna(celdaTAS):
                 ccomplex = 'error'
@@ -58,10 +58,16 @@ if __name__ == "__main__":
     script_dir = os.path.dirname(__file__)
     file_path = os.path.join(script_dir, 'Codigo.txt')
     texto = open(file_path).read()
-    texto = texto.lower()
     arbol, ccomplex = analizadorSintactico(texto)
     if ccomplex == 'error':
-        print('mal')
-    else:
-        #print(at.RenderTree(arbol, style=at.DoubleStyle()).by_attr())
-        print(at.RenderTree(arbol, style=at.DoubleStyle)) # Para ver el lexema y etc
+        print('ccomplex = error')
+        print("El árbol no se ha construido correctamente.")
+    elif arbol:
+        with open("arbol.txt", "w", encoding="utf-8") as f:
+            for pre, fill, node in at.RenderTree(arbol, style=at.ContStyle):
+                lex = getattr(node, 'lexema', '')
+                if lex == '':
+                    f.write(f"{pre}{node.name}\n")
+                else:
+                    f.write(f"{pre}{node.name} lexema: {lex}\n")
+        print("Árbol guardado en arbol.txt")
