@@ -112,7 +112,7 @@ def evalSentencia(arbol,estado):
 #<Lectura>::= 'peek’ ‘(' 'cadena' ',' 'id’ ’)'
 def evalLectura(arbol, estado):
   idtipo = arbol.children[4].lexema
-  valEscribir = input(arbol.children[2].lexema)
+  valEscribir = input((arbol.children[2].lexema)[1:-1])
   try:
     valEscribir = float(valEscribir)
   except:
@@ -147,7 +147,7 @@ def evalVarLista(arbol,estado):
     val = evalExpArit(arbol.children[0],estado)
     return val
   elif arbol.children[0].name == 'cadena':
-    return arbol.children[0].lexema
+    return (arbol.children[0].lexema)[1:-1]
     
 #<Mientras>::= 'While ' <Condicion>':' <Cuerpo>
 def evalMientras(arbol, estado):
@@ -390,7 +390,6 @@ if __name__ == "__main__":
   script_dir = os.path.dirname(__file__)
   file_path = os.path.join(script_dir, 'Codigo.txt')
   texto = open(file_path).read()
-  texto = texto.lower()
   arbol, ccomplex = sintactico.analizadorSintactico(texto)
   analizadorSemantico(arbol)
 #  if arbol:
