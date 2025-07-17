@@ -62,7 +62,6 @@ if __name__ == "__main__":
     script_dir = os.path.dirname(__file__)
     file_path = os.path.join(script_dir, 'Codigo.txt')
     texto = open(file_path).read()
-    texto = texto.lower()
     arbol, ccomplex= analizadorSintactico(texto)
     if ccomplex == 'error':
         print('ccomplex = error')
