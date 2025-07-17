@@ -1,7 +1,4 @@
 import os
-import numpy as np
-import pandas as pd
-import anytree as at
 import analizadorsintactico as sintactico
 
 class elemEstado:
@@ -26,7 +23,7 @@ def analizadorSemantico(arbol):
   evalPrograma(arbol, estado)
   return estado
 
-def asignarReal(arbol,estado,idVar):
+def asignarReal(estado,idVar):
   var = elemEstado(idVar, 'real', 0)
   estado.append(var)
 
@@ -78,7 +75,7 @@ def evalEV1(arbol,estado):
 #<Variable>::= ‘TipoReal' | ‘[‘ ‘constanteReal’ ‘,’ ‘constanteReal’ ‘]’ 
 def evalVariable(arbol,estado,idVar):
   if arbol.children[0].lexema == 'real':
-    asignarReal(arbol, estado,idVar)
+    asignarReal(estado,idVar)
   elif arbol.children[0].lexema =='[':
     asignarMatriz(arbol, estado,idVar)
 
@@ -373,9 +370,9 @@ def evalCond2(arbol,estado):
       return (exp1 > exp2)
     elif operador == '<':
       return (exp1 < exp2)
-    elif operador == '=>':
+    elif operador == '>=':
       return (exp1 >= exp2)
-    elif operador == '=<':
+    elif operador == '<=':
       return (exp1 <= exp2)
     elif operador == '!=':
       return (exp1 != exp2)

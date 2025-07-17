@@ -114,27 +114,6 @@ def esCadena(cadena):
     lexema = cadena[inicio:pos]  # sin comillas
     pos += 1  # Saltar la comilla de cierre
     return (True, 'Tcadena', pos)
-    # lexema=''
-    # F=[5]
-    # posicion=0
-    # EstadoActual=0
-    # Delta=[
-    #  [4,4,4,1,4,4,4],
-    #  [2,2,2,3,2,2,2],
-    #  [2,2,2,3,2,2,2],
-    #  [4,4,4,4,5,4,5],
-    #  [4,4,4,4,4,4,4],
-    #  [5,5,5,5,5,5,5]
-    # ]
-    # while EstadoActual not in (4,5):
-    #     EstadoActual=Delta[EstadoActual][CarASimb(cadena[posicion])]
-    #     posicion+=1
-    #     if posicion < len(cadena):
-    #         lexema=lexema + cadena[posicion]
-    # if EstadoActual in F:
-    #     return (True, 'Tcadena', posicion-1)
-    # else:
-    #     return (False,'',0)
     
 def esReal(cadena):
     F=[4]
@@ -185,12 +164,18 @@ def esSimbolo(fuente): #Toprel, Tllaveizq, Tllaveder, Tcorcheteizq, Tcorcheteder
     elif car == '^':
         return (True, 'Tpotencia',1)
     elif car == '=':
-        if fuente[1] == '=' or fuente[1] == '<' or fuente[1] == '>' or fuente[1] == '!': #agregar todos los operadores relacionales. Toprel           
+        if fuente[1] == '=':
             return(True,'Toprelacional',2)
         else:
             return (True, 'Tasignar',1)
     elif car == '<' or car == '>':
-       return(True,'Toprelacional',1)
+       if fuente[1] == '=':
+           return (True, 'Toprelacional', 2)
+       else:
+           return(True,'Toprelacional',1)
+    elif car == '!':
+        if fuente[1] == '=':
+            return (True, 'Toprelacional', 2)
     else:
         return(False,'',0)
         
