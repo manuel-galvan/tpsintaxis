@@ -377,7 +377,7 @@ def evalCond2(arbol,estado):
       return (exp1 >= exp2)
     elif operador == '=<':
       return (exp1 <= exp2)
-    elif operador == '=!':
+    elif operador == '!=':
       return (exp1 != exp2)
   elif arbol.children[0].name=='llaveizq':
     return evalCondicion(arbol.children[1],estado)
