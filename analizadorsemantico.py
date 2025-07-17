@@ -59,7 +59,6 @@ def evalPrograma(arbol,estado):
   evalCuerpo(arbol.children[3],estado)
 
 #<EspacioVariables>::= 'id' '=' <Variable> <EV1>
-
 def evalEspacioVariables(arbol, estado):
    if not(arbol.is_leaf):
     idVar = arbol.children[0].lexema
@@ -89,12 +88,14 @@ def evalCuerpo2(arbol,estado):
   if not(arbol.is_leaf):
     evalSentencia(arbol.children[0],estado)
     evalAux1(arbol.children[1],estado)
+
 #<aux1>::= <Cuerpo2> | epsilon 
 def evalAux1(arbol,estado):
   if arbol.name == 'epsilon':
     pass
   else:
     evalCuerpo2(arbol.children[0],estado)
+
 #<Sentencia>::= <Asignacion> | <Lectura> | <Escritura> | <Si> | <Mientras>
 def evalSentencia(arbol,estado):
   if arbol.children[0].name == 'asignacion':
@@ -107,6 +108,7 @@ def evalSentencia(arbol,estado):
     evalSi(arbol.children[0],estado)
   elif arbol.children[0].name == 'mientras':
     evalMientras(arbol.children[0],estado)
+
 #<Lectura>::= 'peek’ ‘(' 'cadena' ',' 'id’ ’)'
 def evalLectura(arbol, estado):
   idtipo = arbol.children[4].lexema
@@ -117,22 +119,24 @@ def evalLectura(arbol, estado):
     raise Exception('Se esperaba un real')
   i = recuperarEstado(idtipo, estado)
   estado[i].valor = valEscribir
-    
 
 #<Escritura>::= 'dump’ ‘(' <Lista> ')'
 def evalEscritura(arbol,estado):
   print(evalLista(arbol.children[2],estado))
   
-#<Lista>::= <VarLista><aux2>
+# <Lista>::= <VarLista><aux2>
 def evalLista(arbol,estado):
   cadena=""
   parte = str(evalVarLista(arbol.children[0],estado))
   resto = str(evalAux2(arbol.children[1],estado))   
+  if parte[0:2] == '[[' and parte[-2:len(parte)] == ']]':
+    parte = '\n' + parte + '\n'
   if not(resto == 'None'):
     cadena = parte + resto
   else:
     cadena = parte
   return cadena
+
 #<aux2> ::= ',' <Lista> | epsilon
 def evalAux2(arbol,estado):
   if arbol.children[0].name=='epsilon':
@@ -149,28 +153,21 @@ def evalVarLista(arbol,estado):
     
 #<Mientras>::= 'While ' <Condicion>':' <Cuerpo>
 def evalMientras(arbol, estado):
-    # Evaluar la condición inicial
     valor = evalCondicion(arbol.children[1], estado)
-    
-    # Mientras la condición sea verdadera
     while valor:
-        # Evaluar el cuerpo del bucle
         evalCuerpo(arbol.children[3], estado)
-        
-        # Re-evaluar la condición después de ejecutar el cuerpo
         valor = evalCondicion(arbol.children[1], estado)
-  
   
 #<Asignacion>::= 'id' <aux3>
 def evalAsignacion(arbol,estado):
   nombre = arbol.children[0].lexema
   evalAux3(arbol.children[1],estado, nombre) 
+
 #<aux3> ::=  '=' <ExpArit> | ‘[‘ <ExpArit> ‘,’ <ExpArit> ‘]’ ‘=’ <ExpArit>
 def evalAux3(arbol,estado, nombre):
   if arbol.children[0].lexema == '=':  
     res = evalExpArit(arbol.children[1],estado)
     modificarVariable(estado, nombre, res)
-    #asignarVar(variable,resultado)
   elif arbol.children[0].name == 'corcheteizq':
     fila = evalExpArit(arbol.children[1],estado)
     col = evalExpArit(arbol.children[3],estado)
@@ -201,6 +198,7 @@ def evalEAR1(arbol,estado):
   op1 = evalEAR2(arbol.children[0],estado)
   res = evalSub2(arbol.children[1],estado,op1)
   return res
+
 #<sub2>::= ‘*’ <EAR1> | ‘/’ <EAR1> | epsilon
 def evalSub2(arbol,estado,op1):
   if arbol.children[0].name == 'multiplicacion':
@@ -224,22 +222,18 @@ def evalEAR2(arbol,estado):
   res = evalSub3(arbol.children[1],estado,op1)
   return res
 
-
 #<sub3>::= ‘^’ <EAR2> |epsilon
 def evalSub3(arbol,estado,op1):
   if arbol.children[0].name == 'epsilon':
     return op1
   if type(op1) is not list:
     op1 = float(op1)
-    
   if arbol.children[0].name == 'potencia':
     op2 =float(evalEAR2(arbol.children[1],estado))
     op1 = op1 ** op2
     return op1
-
     
 #<EAR3>::= '('<ExpArit>')' |  'Transpose’ ‘(' <ExpArit> ')' | 'Size’ ‘(' <ExpArit> ',' 'constantereal' ')' | ‘id’ <EAR4> | ‘ConstanteReal’ | ‘-’<EAR3> | <constanteMatriz>
-
 def evalEAR3(arbol,estado):
   if arbol.children[0].name == 'constantereal':
     return float(arbol.children[0].lexema)
@@ -275,6 +269,7 @@ def evalEAR4(arbol,estado,id):
     subFila = evalExpArit(arbol.children[1],estado)
     subCol = evalExpArit(arbol.children[3],estado)
     return matriz[subFila-1][subCol-1]
+
 #<constanteMatriz>::= ‘[‘ <Filas> ‘]’ 
 def evalconstanteMatriz(arbol,estado):
   matriz=[]
@@ -293,23 +288,27 @@ def evalFilas(arbol,estado,matriz):
   evalListaNumeros(arbol.children[1],estado,fila)
   matriz.append(fila)
   evalAux4(arbol.children[3],estado,matriz)
+
 #<aux4>::= ‘,’ <Filas> | epsilon
 def evalAux4(arbol,estado,matriz):
   if arbol.children[0].name=='epsilon':
     pass
   else:
     evalFilas(arbol.children[1],estado,matriz)
+
 #<listaNumeros>::= ‘ConstanteReal’ <aux5> 
 def evalListaNumeros(arbol,estado,fila):
   cReal= arbol.children[0]
   fila.append(cReal)
   evalAux5(arbol.children[1],estado,fila)
+
 #<aux5>::= ‘,’ <listaNumeros> | epsilon
 def evalAux5(arbol,estado,fila):
   if arbol.children[0].name=='epsilon':
     pass
   else:
     evalListaNumeros(arbol.children[1],estado,fila) 
+
 #<Si>::= 'If ' <Condicion> ':' <Cuerpo> <Sii>
 def evalSi(arbol,estado):  
   bool = evalCondicion(arbol.children[1],estado)
@@ -317,6 +316,7 @@ def evalSi(arbol,estado):
     evalCuerpo(arbol.children[3],estado)
   else:
     evalSii(arbol.children[4],estado)
+
 #<Sii>::= 'else' ’:’ <Cuerpo> | 'elif' <Condicion> ':' <Cuerpo> <Sii> | epsilon
 def evalSii(arbol,estado):
   if arbol.children[0].name=='else':
@@ -329,6 +329,7 @@ def evalSii(arbol,estado):
       evalSii(arbol.children[4],estado)
   elif arbol.children[0].name=='epsilon':
     pass
+
 #<Condicion>::= <COND1> <aux6> 
 def evalCondicion(arbol,estado):
   val = evalCond1(arbol.children[0],estado)
@@ -348,6 +349,7 @@ def evalCond1(arbol,estado):
   val = evalCond2(arbol.children[0],estado)
   res = evalAux7(arbol.children[1], estado, val)
   return res
+
 #<aux7>::= 'and' <COND1> | epsilon
 def evalAux7(arbol, estado, cond1):
   if arbol.children[0].name=='epsilon':
@@ -355,7 +357,7 @@ def evalAux7(arbol, estado, cond1):
   else:
     cond2 = evalCond1(arbol.children[1], estado)
     return (cond1 and cond2)
-#*  
+
 #<COND2>::= ‘not’ <COND2> | <ExpArit> ‘opRelacional’ <ExpArit> | ‘{‘ <Condicion> ‘}’
 def evalCond2(arbol,estado):
   if arbol.children[0].name=='not':
@@ -381,8 +383,6 @@ def evalCond2(arbol,estado):
     return evalCondicion(arbol.children[1],estado)
   else:
     raise Exception('Condicion no valida')
-
-
 
 if __name__ == "__main__":
   script_dir = os.path.dirname(__file__)
