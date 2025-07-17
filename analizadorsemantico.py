@@ -127,10 +127,12 @@ def evalEscritura(arbol,estado):
 # <Lista>::= <VarLista><aux2>
 def evalLista(arbol,estado):
   cadena=""
-  parte = str(evalVarLista(arbol.children[0],estado))
+  parte = evalVarLista(arbol.children[0],estado)
+  if isinstance(parte, np.ndarray):
+    parte = '\n' + str(parte) + '\n'
+  else:
+    parte = str(parte)
   resto = str(evalAux2(arbol.children[1],estado))   
-  if parte[0:2] == '[[' and parte[-2:len(parte)] == ']]':
-    parte = '\n' + parte + '\n'
   if not(resto == 'None'):
     cadena = parte + resto
   else:
