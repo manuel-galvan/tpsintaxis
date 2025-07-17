@@ -15,7 +15,7 @@ def analizadorSintactico(texto):
     poss = 0
     script_dir = os.path.dirname(__file__)
     csv_path = os.path.join(script_dir, 'TAS-Minus.csv')
-    df = pd.read_csv(csv_path) #Por si no arranca
+    df = pd.read_csv(csv_path, sep= ';') #Por si no arranca
     df.set_index('Unnamed: 0', inplace=True)
     pesos = at.Node('pesos') # pesos del arbol es programa
     programa = at.Node('programa')
