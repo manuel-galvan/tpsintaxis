@@ -1,5 +1,28 @@
-Program Basta_xfabor
-num = real
+Program OperacionesAritmeticasMatriciales
+matriz = [2,2]
+matriz1 = [2,2]
+sumaM = [2,2]
+restaM = [2,2]
+multiplicacionM = [2,2]
+productoPorEscalarM = [2,2]
+matrizT = [2,2]
+escalar = real
+tam = real
+
 {
-peek ('holaaaa', num)
+escalar = 2
+matriz = [[1,2],[3,4]]
+matriz1 = [[5,6],[7,8]]
+sumaM = matriz + matriz1
+restaM = matriz1 - matriz
+multiplicacionM = matriz1 * matriz
+productoPorEscalarM = matriz * escalar
+tam = size(matriz,2)
+matrizT = transpose(matriz)
+dump(sumaM)
+dump(restaM)
+dump(multiplicacionM)
+dump(productoPorEscalarM)
+dump(tam)
+dump(matrizT)
 }
