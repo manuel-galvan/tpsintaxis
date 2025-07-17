@@ -1,8 +1,8 @@
 import os
-import pandas as pd
-import analizadorsintactico as sintactico
-import anytree as at
 import numpy as np
+import pandas as pd
+import anytree as at
+import analizadorsintactico as sintactico
 
 class elemEstado:
   def __init__(self, id, tipo, valor, fila = 0, columna = 0):
@@ -19,7 +19,7 @@ def recuperarEstado(idEstado, estado):
       return i
     else:
       i += 1
-  raise Exception('No se definio la variable ', idEstado)
+  raise Exception(f'No se definio la variable {idEstado}')
 
 def analizadorSemantico(arbol):
   estado = []
@@ -57,7 +57,7 @@ def modificarVariable(estado, nombre, valor):
   
 #<Programa>::= 'Program' 'id' <EspacioVariables> <Cuerpo>
 def evalPrograma(arbol,estado):
-  evalEspacioVariables(arbol.children[2],estado) # arbol aca tendria que ser el puntero hijo de EspacioVariable
+  evalEspacioVariables(arbol.children[2],estado)
   evalCuerpo(arbol.children[3],estado)
 
 #<EspacioVariables>::= 'id' '=' <Variable> <EV1>
@@ -112,7 +112,7 @@ def evalSentencia(arbol,estado):
 #<Lectura>::= 'peek’ ‘(' 'cadena' ',' 'id’ ’)'
 def evalLectura(arbol, estado):
   idtipo = arbol.children[4].lexema
-  valEscribir = input((arbol.children[2].lexema)[1:-1])
+  valEscribir = input(arbol.children[2].lexema)
   try:
     valEscribir = float(valEscribir)
   except:
@@ -123,23 +123,31 @@ def evalLectura(arbol, estado):
 
 #<Escritura>::= 'dump’ ‘(' <Lista> ')'
 def evalEscritura(arbol,estado):
-  evalLista(arbol.children[2],estado)
+  print(evalLista(arbol.children[2],estado))
+  
 #<Lista>::= <VarLista><aux2>
 def evalLista(arbol,estado):
-  evalVarLista(arbol.children[0],estado)
-  evalAux2(arbol.children[1],estado)
+  cadena=""
+  parte = str(evalVarLista(arbol.children[0],estado))
+  resto = str(evalAux2(arbol.children[1],estado))   
+  if not(resto == 'None'):
+    cadena = parte + resto
+  else:
+    cadena = parte
+  return cadena
 #<aux2> ::= ',' <Lista> | epsilon
 def evalAux2(arbol,estado):
   if arbol.children[0].name=='epsilon':
     pass
   else:
-    evalLista(arbol.children[0],estado)
+    return evalLista(arbol.children[1],estado)
 #<VarLista>::= 'cadena' | <ExpArit>  }
 def evalVarLista(arbol,estado):
   if arbol.children[0].name == 'exparit':
     val = evalExpArit(arbol.children[0],estado)
+    return val
   elif arbol.children[0].name == 'cadena':
-     pass
+    return arbol.children[0].lexema
     
 #<Mientras>::= 'While ' <Condicion>':' <Cuerpo>
 def evalMientras(arbol, estado):
@@ -163,7 +171,6 @@ def evalAsignacion(arbol,estado):
 def evalAux3(arbol,estado, nombre):
   if arbol.children[0].lexema == '=':  
     res = evalExpArit(arbol.children[1],estado)
-    pp = res
     modificarVariable(estado, nombre, res)
     #asignarVar(variable,resultado)
   elif arbol.children[0].name == 'corcheteizq':
@@ -200,9 +207,13 @@ def evalEAR1(arbol,estado):
 def evalSub2(arbol,estado,op1):
   if arbol.children[0].name == 'multiplicacion':
     op2 = evalEAR1(arbol.children[1],estado)
-    res = op1 * op2
+    pp = type(op1)
+    if type(op1) is np.ndarray and type(op2) is np.ndarray:
+      res = op2 @ op1
+    else:
+      res = op1 * op2
     return res
-  elif arbol.children[0].name == 'division':
+  elif arbol.children[0].name == 'dividir':
     op2 = evalEAR1(arbol.children[1],estado)
     res = op1 / op2
     return res
@@ -216,7 +227,7 @@ def evalEAR2(arbol,estado):
   return res
 
 
-#<sub3>::= ‘^’ <EAR2> | epsilon
+#<sub3>::= ‘^’ <EAR2> |epsilon
 def evalSub3(arbol,estado,op1):
   if arbol.children[0].name == 'epsilon':
     return op1
@@ -227,7 +238,6 @@ def evalSub3(arbol,estado,op1):
     op2 =float(evalEAR2(arbol.children[1],estado))
     op1 = op1 ** op2
     return op1
-  
 
     
 #<EAR3>::= '('<ExpArit>')' |  'Transpose’ ‘(' <ExpArit> ')' | 'Size’ ‘(' <ExpArit> ',' 'constantereal' ')' | ‘id’ <EAR4> | ‘ConstanteReal’ | ‘-’<EAR3> | <constanteMatriz>
@@ -238,9 +248,17 @@ def evalEAR3(arbol,estado):
   elif arbol.children[0].name == 'constantematriz':
     return evalconstanteMatriz(arbol.children[0],estado)
   elif arbol.children[0].name == 'size':
-    return evalExpArit(arbol.children[2],estado)
+    matriz = evalExpArit(arbol.children[2],estado)
+    fila, columna = matriz.shape
+    if arbol.children[4].lexema == '1': # es fila
+      return fila
+    elif arbol.children[4].lexema == '2': # es columna
+      return columna
+    else:
+      raise Exception('1: fila, 2: columna, para el size')
   elif arbol.children[0].name == 'transpose':
-    return evalExpArit(arbol.children[2],estado)
+    matrizT = evalExpArit(arbol.children[2],estado)
+    return matrizT.T
   if arbol.children[0].name =='parentesisizq':
     return evalExpArit(arbol.children[1],estado)
   elif arbol.children[0].name == 'id':
@@ -329,7 +347,6 @@ def evalAux6(arbol, estado, cond1):
   
 #<COND1>::= <COND2> <aux7> 
 def evalCond1(arbol,estado):
-  pp = arbol
   val = evalCond2(arbol.children[0],estado)
   res = evalAux7(arbol.children[1], estado, val)
   return res
@@ -340,7 +357,7 @@ def evalAux7(arbol, estado, cond1):
   else:
     cond2 = evalCond1(arbol.children[1], estado)
     return (cond1 and cond2)
-
+#*  
 #<COND2>::= ‘not’ <COND2> | <ExpArit> ‘opRelacional’ <ExpArit> | ‘{‘ <Condicion> ‘}’
 def evalCond2(arbol,estado):
   if arbol.children[0].name=='not':
@@ -356,20 +373,28 @@ def evalCond2(arbol,estado):
       return (exp1 > exp2)
     elif operador == '<':
       return (exp1 < exp2)
-    elif operador == '>=':
+    elif operador == '=>':
       return (exp1 >= exp2)
-    elif operador == '<=':
+    elif operador == '=<':
       return (exp1 <= exp2)
+    elif operador == '=!':
+      return (exp1 != exp2)
   elif arbol.children[0].name=='llaveizq':
     return evalCondicion(arbol.children[1],estado)
+  else:
+    raise Exception('Condicion no valida')
+
+
 
 if __name__ == "__main__":
   script_dir = os.path.dirname(__file__)
   file_path = os.path.join(script_dir, 'Codigo.txt')
   texto = open(file_path).read()
+  texto = texto.lower()
   arbol, ccomplex = sintactico.analizadorSintactico(texto)
-  if arbol:
-    est = analizadorSemantico(arbol)
-    for elemento in est:
-      print(f'nombre = {elemento.id}')
-      print(f'valor = {elemento.valor}')
+  analizadorSemantico(arbol)
+#  if arbol:
+#    est = analizadorSemantico(arbol)
+#    for elemento in est:
+#      print(f'nombre = {elemento.id}')
+#      print(f'valor = {elemento.valor}')

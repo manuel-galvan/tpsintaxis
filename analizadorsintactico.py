@@ -26,10 +26,12 @@ def analizadorSintactico(texto):
         nombreNodo = nodoPila.name
         if nombreNodo in variables:
             fila = nombreNodo
-            columna = (ccomplex[1:]).lower()
+            columna = ccomplex[1:]
             celdaTAS = df.loc[fila, columna]
             if pd.isna(celdaTAS):
                 ccomplex = 'error'
+                print(f"Error: No se encontró la celda para {fila} y {columna}")
+
             else:
                 cTas=str(celdaTAS).split()
                 tam = len(cTas) - 1
@@ -45,10 +47,12 @@ def analizadorSintactico(texto):
                 texto, ccomplex, poss, llexema = lexico.sigCompLex(texto, poss)
             else:
                 ccomplex = 'error'
+                
         elif nombreNodo == 'epsilon':
             pass
         else:
             ccomplex = 'error'
+            
     nodoPila = pila.pop()
     nombreNodo = nodoPila.name
     return  programa, ccomplex
@@ -58,11 +62,11 @@ if __name__ == "__main__":
     script_dir = os.path.dirname(__file__)
     file_path = os.path.join(script_dir, 'Codigo.txt')
     texto = open(file_path).read()
-    arbol, ccomplex = analizadorSintactico(texto)
+    texto = texto.lower()
+    arbol, ccomplex= analizadorSintactico(texto)
     if ccomplex == 'error':
         print('ccomplex = error')
-        print("El árbol no se ha construido correctamente.")
-    elif arbol:
+    if arbol:
         with open("arbol.txt", "w", encoding="utf-8") as f:
             for pre, fill, node in at.RenderTree(arbol, style=at.ContStyle):
                 lex = getattr(node, 'lexema', '')
@@ -71,3 +75,5 @@ if __name__ == "__main__":
                 else:
                     f.write(f"{pre}{node.name} lexema: {lex}\n")
         print("Árbol guardado en arbol.txt")
+    else:
+        print("El árbol no se ha construido correctamente.")
