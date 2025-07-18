@@ -61,6 +61,7 @@ Program Declaraciones
 > Las matrices son direccionables por subíndice para poder acceder a cada uno de sus elementos.
 
 
+
 ### Lectura
 La lectura se hace con el comando `peek`. El comando peek acepta dos parametros, primero una cadena que sera mostrada por pantalla y la variable en la que se escribira la lectura.
 ```
@@ -82,6 +83,7 @@ En rd se pueden realizar operaciones aritméticas tanto con `números reales` co
 Las operaciones que soporta son: `suma, resta, multiplicación, división, potencia y raíz (mediante potencia fraccionaria) tanto para reales como para matrices, como así también transposición mediante función transpose, multiplicación por un escalar y cálculo de tamaño para matrices mediante la función size.`
 
 > Se utiliza la prioridad de signos estándar y asociación por izquierda.
+
 
 ```
 Program Operaciones
@@ -149,7 +151,10 @@ Program Operaciones
 		<th>distinto de</th>
 	</tr>
 </table>
-> Por otro lado, para conectar múltiples condiciones, los operadores lógicos soportados son: and, or y not.
+
+			
+   > Por otro lado, para conectar múltiples condiciones, los operadores lógicos soportados son: and, or y not.
+
 
 ### Condicionales y ciclos
 
