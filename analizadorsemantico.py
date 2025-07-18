@@ -32,13 +32,7 @@ def asignarMatriz(arbol, estado, nombre):
   fila = int(arbol.children[1].lexema)
   columna = int(arbol.children[3].lexema)
   if (fila <= 300 and fila >= 1) and (columna <= 300 and columna >= 1):
-    valor = []
-    while len(valor) < fila:
-        col = []
-        while len(col) < columna:
-            col.append(0)
-        valor.append(col)
-    valor = np.matrix(valor)
+    valor = np.zeros((fila, columna))
     matriz = elemEstado(nombre, 'matriz', valor, fila, columna)
     estado.append(matriz)
   else:
@@ -46,8 +40,8 @@ def asignarMatriz(arbol, estado, nombre):
   
 def modificarVariableMatriz(estado, nombre, valor, fila, columna):
   i = recuperarEstado(nombre, estado)
-  if (1 <= fila <= estado[i].fila) and (1<= columna <= estado[i].columna):
-    estado[i].valor[(fila-1)][(columna-1)] = valor
+  if (1 <= fila <= int(estado[i].fila)) and (1<= columna <= int(estado[i].columna)):
+    estado[i].valor[(fila-1),(columna-1)] = valor
 
 def modificarVariable(estado, nombre, valor):
   i = recuperarEstado(nombre, estado)
@@ -171,8 +165,8 @@ def evalAux3(arbol,estado, nombre):
     res = evalExpArit(arbol.children[1],estado)
     modificarVariable(estado, nombre, res)
   elif arbol.children[0].name == 'corcheteizq':
-    fila = evalExpArit(arbol.children[1],estado)
-    col = evalExpArit(arbol.children[3],estado)
+    fila = int(evalExpArit(arbol.children[1],estado))
+    col = int(evalExpArit(arbol.children[3],estado))
     constanteReal = evalExpArit(arbol.children[6],estado)
     modificarVariableMatriz(estado,nombre,constanteReal, fila, col)
 
@@ -228,12 +222,32 @@ def evalEAR2(arbol,estado):
 def evalSub3(arbol,estado,op1):
   if arbol.children[0].name == 'epsilon':
     return op1
-  if type(op1) is not list:
-    op1 = float(op1)
   if arbol.children[0].name == 'potencia':
-    op2 =float(evalEAR2(arbol.children[1],estado))
-    op1 = op1 ** op2
-    return op1
+    print(arbol.children[1])
+    if isinstance(op1, np.ndarray):
+      if (op1.shape[0] == op1.shape[1]):
+        print(arbol.children[1].lexema)
+        op2 =int(evalEAR2(arbol.children[1],estado))
+        if op2 >= 0:
+          op1 = np.linalg.matrix_power(op1, op2)
+          return op1 
+        else:
+          raise Exception('La potencia debe ser un numero positivo')
+      else:
+        raise Exception('La potencia solo se puede realizar con matrices cuadradas')
+    else:
+      op2 = float(evalEAR2(arbol.children[1],estado))
+      op1 = op1 ** op2
+      return op1
+# def evalSub3(arbol,estado,op1):
+#   if arbol.children[0].name == 'epsilon':
+#     return op1
+#   if type(op1) is not list:
+#     op1 = float(op1)
+#   if arbol.children[0].name == 'potencia':
+#     op2 =float(evalEAR2(arbol.children[1],estado))
+#     op1 = op1 ** op2
+#     return op1
     
 #<EAR3>::= '('<ExpArit>')' |  'Transpose’ ‘(' <ExpArit> ')' | 'Size’ ‘(' <ExpArit> ',' 'constantereal' ')' | ‘id’ <EAR4> | ‘ConstanteReal’ | ‘-’<EAR3> | <constanteMatriz>
 def evalEAR3(arbol,estado):
@@ -268,8 +282,8 @@ def evalEAR4(arbol,estado,id):
   else:
     ind = recuperarEstado(id, estado)
     matriz = estado[ind].valor
-    subFila = evalExpArit(arbol.children[1],estado)
-    subCol = evalExpArit(arbol.children[3],estado)
+    subFila = int(evalExpArit(arbol.children[1],estado))
+    subCol = int(evalExpArit(arbol.children[3],estado))
     return matriz[subFila-1][subCol-1]
 
 #<constanteMatriz>::= ‘[‘ <Filas> ‘]’ 
