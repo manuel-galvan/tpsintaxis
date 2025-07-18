@@ -46,6 +46,7 @@ El compilador le asigna a todas las variables un valor para fila y columna.
 ### Declaracion de matrices
 La declaración de una matriz de la forma `matriz = [m,n]`, con m y n enteros positivos menores o iguales que 300 lleva al compilador a crear una matriz de tamaño m x n nula, con valor m para la fila y n para la columna.
 
+
 ### Declaración de reales
 La declaración de un real de la forma `numero = real` hace que el compilador le asigne automáticamente un valor de 0 a la variable y 0 para las filas y las columnas.
 Ejemplo:
