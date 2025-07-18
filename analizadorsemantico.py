@@ -199,7 +199,6 @@ def evalEAR1(arbol,estado):
 def evalSub2(arbol,estado,op1):
   if arbol.children[0].name == 'multiplicacion':
     op2 = evalEAR1(arbol.children[1],estado)
-    pp = type(op1)
     if type(op1) is np.ndarray and type(op2) is np.ndarray:
       res = op2 @ op1
     else:
@@ -272,7 +271,7 @@ def evalEAR3(arbol,estado):
   elif arbol.children[0].name == 'id':
     return evalEAR4(arbol.children[1],estado,arbol.children[0].lexema)
   elif arbol.children[0].name == 'menos':
-    return evalEAR3(arbol.children[1],estado)
+    return -(evalEAR3(arbol.children[1],estado))
 
 #<EAR4>::= ‘[‘ <ExpArit> ‘,’ <ExpArit> ‘]’ | epsilon 
 def evalEAR4(arbol,estado,id):
