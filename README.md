@@ -4,23 +4,56 @@
 <h2>Que significa rd</h2>
 <p>rd viene de un juego de palabras con el apellido de John McCarthy, padre de la Inteligencia Artificial y del lenguaje LISP</p>
 <br>
-<h2>Documentacion</h2>
+<h2>Indice</h2>
 <ul>
-  <li><a href='sintaxis-basica'>Sintaxis basica</a></li>
+  <li><a href='#forma-del-programa'>Forma del programa</a></li>
+  <li><a href='#bloque-principal'>Bloque principal</a></li>
+  <li><a href='#declaracion-y-uso-de-variables'>Declaracion y uso de variables</a></li>
+  <li><a href='#lectura'>Lectura</a></li>
+  <li><a href='#lectura'>Lectura</a></li>
   <li><a href='#lectura'>Lectura</a></li>
   <li><a href='#escritura'>Escritura</a></li>
   <li><a href='#ejemplos-de-codigo'>Ejemplos de codigo</a></li>
 </ul>
 
-### Sintaxis basica
+### Forma del programa
+Los programas comienzan con la palabra reservada Program seguida de un identificador, que será el nombre del mismo.
 ```
-Program nombrePrograma
-variableReal = real
-variableMatriz = [2,2]
+Program NombrePrograma
+```
+### Bloque principal
+El bloque principal del programa está delimitado por llaves { y }. Dentro de este bloque se escribe el cuerpo del programa, donde se asignan valores, se realizan operaciones y se ejecutan instrucciones.
+```
 {
-//Cuerpo del programa
+  cuerpo del programa
 }
 ```
+
+### Declaración y uso de variables
+Las variables que soporta rd son: 
+<ul>real.</ul>
+<ul>matrices[M, N], donde M son filas y N columnas, de hasta [300,300] inclusive.</ul>
+
+Las variables son declaradas antes del bloque principal. 
+Las asignaciones se realizan de la forma `id = tipo`, no se necesita un tipo de separación específica entre cada una, aunque se aceptan saltos de línea y espacios.
+El compilador le asigna a todas las variables un valor para fila y columna.
+
+### Declaracion de matrices
+La declaración de una matriz de la forma matriz = [m,n], con m y n enteros positivos menores o iguales que 300 lleva al compilador a crear una matriz de tamaño m x n nula, con valor m para la fila y n para la columna.
+
+### Declaración de reales
+	La declaración de un real de la forma numero = real hace que el compilador le asigne automáticamente un valor de 0 a la variable y 0 para las filas y las columnas.
+Ejemplo:
+Program Declaraciones
+  x = real
+  matriz = [3,2]
+{
+  // cuerpo del programa
+}
+
+
+Las matrices son direccionables por subíndice para poder acceder a cada uno de sus elementos.
+
 
 ### Lectura
 La lectura se hace con el comando `peek`. El comando peek acepta dos parametros, primero una cadena que sera mostrada por pantalla y la variable en la que se escribira la lectura.
