@@ -6,12 +6,21 @@
 <br>
 <h2>Documentacion</h2>
 <ul>
+  <li><a href='sintaxis-basica'>Sintaxis basica</a></li>
   <li><a href='#lectura'>Lectura</a></li>
   <li><a href='#escritura'>Escritura</a></li>
   <li><a href='#ejemplos-de-codigo'>Ejemplos de codigo</a></li>
 </ul>
 
-
+### Sintaxis basica
+```
+Program nombrePrograma
+variableReal = real
+variableMatriz = [2,2]
+{
+//Cuerpo del programa
+}
+```
 
 ### Lectura
 La lectura se hace con el comando `peek`. El comando peek acepta dos parametros, primero una cadena que sera mostrada por pantalla y la variable en la que se escribira la lectura.
