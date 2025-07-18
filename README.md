@@ -11,10 +11,11 @@
   <li><a href='#declaracion-y-uso-de-variables'>Declaracion y uso de variables</a></li>
   <li><a href='#declaracion-de-matrices'>Declaracion de matrices</a></li>
   <li><a href='#declaracion-de-reales'>Declaracion de reales</a></li>
-  <li><a href='#lectura'>Lectura</a></li>
+  <li><a href='#lectura'>Lectura</a></li> 
   <li><a href='#escritura'>Escritura</a></li>
 <li><a href='#operaciones-aritmeticas'>Operaciones aritmeticas</a></li>
 	<li><a href='#operadores-logicos-y-relacionales'>Operadores logicos y relacionales</a></li>
+	<li><a href='#condicionales-y-ciclos'>Condicionales y ciclos</a></li>
   <li><a href='#ejemplos-de-codigo'>Ejemplos de codigo</a></li>
 </ul>
 
@@ -31,7 +32,7 @@ El bloque principal del programa está delimitado por llaves { y }. Dentro de es
 }
 ```
 
-### Declaración y uso de variables
+### Declaracion y uso de variables
 Las variables que soporta rd son: 
 <ul>
 <li>real.</li>
@@ -117,13 +118,95 @@ Program Operaciones
 > Ambas matrices deben ser del mismo tamaño para poder sumarse. Se debe asignar a una variable para guardar el resultado.
 
 ### Operadores logicos y relacionales
+> Operadores relacionales
 <table>
 	<tr>
-		<th>Company</th>
-    <th>Contact</th>
-    <th>Country</th>
+		<th>Operador</th>
+    <th>Significado</th>
+	</tr>
+	<tr>
+		<th>==</th>
+		<th>igualdad</th>
+	</tr>
+	<tr>
+		<th><=</th>
+		<th>menor o igual que</th>
+	</tr>
+	<tr>
+		<th> >= </th>
+		<th>mayor o igual que</th>
+	</tr>
+			<tr>
+		<th> < </th>
+		<th>menor que</th>
+	</tr>
+			<tr>
+		<th> > </th>
+		<th>mayor que</th>
+	</tr>
+			<tr>
+		<th> != </th>
+		<th>distinto de</th>
 	</tr>
 </table>
+> Por otro lado, para conectar múltiples condiciones, los operadores lógicos soportados son: and, or y not.
+
+### Condicionales y ciclos
+
+Permiten ejecutar diferentes bloques de código según condiciones lógicas o relacionales. rd soporta: `if:` para la primera condición, `elif:` para condiciones adicionales y `else:` para el caso por defecto si ninguna condición previa se cumple.
+```
+if {condición}:
+{
+   instrucciones si condición es verdadera
+}
+elif {otra_condición}:
+{
+   instrucciones si esta condición es verdadera
+}
+else:
+{
+   instrucciones si ninguna anterior es verdadera
+}
+```
+En los condicionales, el uso de llaves `{ }` es obligatorio tanto en la condición como así también en el bloque de instrucciones a seguir si tal condición se cumple o no.
+Además, luego de cada condición es necesario el uso de : 
+Para los ciclos while, la sintaxis será la misma que para los condicionales:
+```
+while {condición}:
+{
+  instrucciones que se repiten
+}
+```
+```
+Ejemplo:
+cond = 22
+cond1 = 30
+cond2 = 0
+
+if {cond > cond1}:
+{
+  cond2 = 1
+}
+elif {cond < 11}:
+{
+  cond2 = 2
+}
+elif {cond != 1 and not{cond == 3}}:
+{
+  cond2 = 3
+}
+elif {cond <= 8 or cond >= 22}:
+{
+  cond2 = 4
+}
+else:
+{
+  cond2 = 5
+}
+
+dump(cond2)
+```
+
 ### Ejemplos de codigo
 
 > Sumas, restas, divisiones, potencias y raices.
