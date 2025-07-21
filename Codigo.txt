@@ -1,0 +1,12 @@
+program EjercicioWhile
+num = real
+cantidad = real
+{
+peek('ingrese un numero: ',num)
+peek('cuantas veces quiere repetir el numero? ',cantidad)
+while{cantidad != 0}:
+{
+    dump(num)
+cantidad = cantidad-1
+}
+}
