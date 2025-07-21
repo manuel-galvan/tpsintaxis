@@ -86,7 +86,7 @@ def esIdentificador(cadena):
     EstadoActual=0
     Delta=[
      [1,2,2,2,2,2,2],
-     [1,1,1,2,2,1,3],
+     [1,1,1,2,3,1,3],
      [2,2,2,2,2,2,2],
      [3,3,3,3,3,3,3]
     ]
@@ -98,27 +98,22 @@ def esIdentificador(cadena):
     else:
         return (False,'',0)
 def esCadena(cadena):
-    lexema=''
-    F=[5]
-    posicion=0
-    EstadoActual=0
-    Delta=[
-     [4,4,4,1,4,4,4],
-     [2,2,2,3,2,2,2],
-     [2,2,2,3,2,2,2],
-     [4,4,4,4,5,4,5],
-     [4,4,4,4,4,4,4],
-     [5,5,5,5,5,5,5]
-    ]
-    while EstadoActual not in (4,5):
-        EstadoActual=Delta[EstadoActual][CarASimb(cadena[posicion])]
-        posicion+=1
-        if posicion < len(cadena):
-            lexema=lexema + cadena[posicion]
-    if EstadoActual in F:
-        return (True, 'Tcadena', posicion-1)
-    else:
+    pos=0
+    lexema = ''
+    if cadena[pos] != "'":
+        return None, pos
+
+    pos += 1
+    inicio = pos
+    while pos < len(cadena) and cadena[pos] != "'":
+        pos += 1
+
+    if pos >= len(cadena):  # Cadena no cerrada
         return (False,'',0)
+
+    lexema = cadena[inicio:pos]  # sin comillas
+    pos += 1  # Saltar la comilla de cierre
+    return (True, 'Tcadena', pos)
     
 def esReal(cadena):
     F=[4]
@@ -169,74 +164,55 @@ def esSimbolo(fuente): #Toprel, Tllaveizq, Tllaveder, Tcorcheteizq, Tcorcheteder
     elif car == '^':
         return (True, 'Tpotencia',1)
     elif car == '=':
-        if fuente[1] == '=' or fuente[1] == '<' or fuente[1] == '>': #agregar todos los operadores relacionales. Toprel           
+        if fuente[1] == '=':
             return(True,'Toprelacional',2)
         else:
             return (True, 'Tasignar',1)
     elif car == '<' or car == '>':
-       return(True,'Toprelacional',2)
+       if fuente[1] == '=':
+           return (True, 'Toprelacional', 2)
+       else:
+           return(True,'Toprelacional',1)
+    elif car == '!':
+        if fuente[1] == '=':
+            return (True, 'Toprelacional', 2)
     else:
         return(False,'',0)
         
-def sigCompLex(fuente,pos):
-    #Inicializar
-    opcon=[]
-    i=1
-    car=''
-    posicion=0
-    #Eliminar lexema anterior
-    fuente =fuente[pos:].lstrip()
-    
-     #Saltar
-    """"for i in range(32):
-        opcon.append(chr(i))"""
-    while fuente[:posicion] in opcon:
-        posicion+=1
-        fuente=fuente[posicion:].lstrip()
-    # FUNCIONES """ES"""
-
+def sigCompLex(fuente, pos):
+    fuente = fuente[pos:].lstrip()
     if fuente == '':
-        complex='pesos'
-        lexema=''
-        
-    elif esPalabraReservada(fuente)[0]:
-      complex= esPalabraReservada(fuente)[1]
-      pos= esPalabraReservada(fuente)[2]
-    #Consultar si está bien hecho agregando con append al TSG   
+        return fuente, 'pesos', pos, ''
+    fuente_lower = fuente.lower()
+    if esPalabraReservada(fuente_lower)[0]:
+        complex = esPalabraReservada(fuente_lower)[1]
+        lexema_len = esPalabraReservada(fuente_lower)[2]
+        lexema = fuente[:lexema_len]  # Usa la forma original con mayúsculas
+        return fuente, complex, lexema_len, lexema
     elif esIdentificador(fuente)[0]:
-      complex= esIdentificador(fuente)[1]
-      pos= esIdentificador(fuente)[2]
-      lexema='T'+fuente[:pos]
-      if not(lexema in TipoSimboloGramatical):
-          TipoSimboloGramatical.append(lexema) # TSagregar 
-      
+        complex = esIdentificador(fuente)[1]
+        lexema_len = esIdentificador(fuente)[2]
+        lexema = fuente[:lexema_len]
+        return fuente, complex, lexema_len, lexema
     elif esCadena(fuente)[0]:
-      complex= esCadena(fuente)[1]
-      pos= esCadena(fuente)[2]
-        
+        complex = esCadena(fuente)[1]
+        lexema_len = esCadena(fuente)[2]
+        lexema = fuente[:lexema_len]
+        return fuente, complex, lexema_len, lexema
     elif esReal(fuente)[0]:
-      complex= esReal(fuente)[1]
-      pos= esReal(fuente)[2]
-        
+        complex = esReal(fuente)[1]
+        lexema_len = esReal(fuente)[2]
+        lexema = fuente[:lexema_len]
+        return fuente, complex, lexema_len, lexema
     elif esSimbolo(fuente)[0]:
-       complex= esSimbolo(fuente)[1]
-       pos= esSimbolo(fuente)[2]
-    else: 
-       complex= 'error'
-       pos=0
-  
-    lexema=fuente[:pos]
-    return(fuente,complex,pos,lexema)
-  
-# Codigo.txt
-'''Program julian    
-num1 = real
-num2 = real
-
-{if num1 ==num2:
-{num1=num2+1}}'''
+        complex = esSimbolo(fuente)[1]
+        lexema_len = esSimbolo(fuente)[2]
+        lexema = fuente[:lexema_len]
+        return fuente, complex, lexema_len, lexema
+    else:
+        return fuente, 'error', 0, ''
     
-# <<<<<<<<<--------- Prueba
+
 if __name__ == "__main__":
     ccomplex=''
     poss=0

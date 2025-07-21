@@ -15,7 +15,7 @@ def analizadorSintactico(texto):
     poss = 0
     script_dir = os.path.dirname(__file__)
     csv_path = os.path.join(script_dir, 'TAS-Minus.csv')
-    df = pd.read_csv(csv_path) #Por si no arranca
+    df = pd.read_csv(csv_path, sep= ';') #Por si no arranca
     df.set_index('Unnamed: 0', inplace=True)
     pesos = at.Node('pesos') # pesos del arbol es programa
     programa = at.Node('programa')
@@ -30,6 +30,8 @@ def analizadorSintactico(texto):
             celdaTAS = df.loc[fila, columna]
             if pd.isna(celdaTAS):
                 ccomplex = 'error'
+                print(f"Error: No se encontró la celda para {fila} y {columna}")
+
             else:
                 cTas=str(celdaTAS).split()
                 tam = len(cTas) - 1
@@ -40,33 +42,37 @@ def analizadorSintactico(texto):
                     pila.append(nodoPila.children[tam-j])      
         elif nombreNodo in terminales:            
             if nombreNodo == ccomplex[1:]:
-                nodoPila.lexema = llexema
-                nodoPila.complex = ccomplex
+                nodoPila.lexema = llexema       # Guardamos el lexema general
+                nodoPila.complex = ccomplex     # Guardamos la categoría gramatical
                 texto, ccomplex, poss, llexema = lexico.sigCompLex(texto, poss)
             else:
                 ccomplex = 'error'
+                
         elif nombreNodo == 'epsilon':
             pass
         else:
             ccomplex = 'error'
+            
     nodoPila = pila.pop()
     nombreNodo = nodoPila.name
-   
-    if ccomplex == 'error':
-        print('Error en la linea: ', llexema)
-    elif (nombreNodo == 'pesos') and (ccomplex == 'pesos'):
-            print('Analisis sintactico correcto')    
-    return  programa
+    return  programa, ccomplex
 
 
 if __name__ == "__main__":
     script_dir = os.path.dirname(__file__)
     file_path = os.path.join(script_dir, 'Codigo.txt')
     texto = open(file_path).read()
-    texto = texto.lower()
-    arbol = analizadorSintactico(texto)
+    arbol, ccomplex= analizadorSintactico(texto)
+    if ccomplex == 'error':
+        print('ccomplex = error')
     if arbol:
-        #print(at.RenderTree(arbol, style=at.DoubleStyle()).by_attr())
-        print(at.RenderTree(arbol, style=at.DoubleStyle)) # Para ver el lexema y etc
+        with open("arbol.txt", "w", encoding="utf-8") as f:
+            for pre, fill, node in at.RenderTree(arbol, style=at.ContStyle):
+                lex = getattr(node, 'lexema', '')
+                if lex == '':
+                    f.write(f"{pre}{node.name}\n")
+                else:
+                    f.write(f"{pre}{node.name} lexema: {lex}\n")
+        print("Árbol guardado en arbol.txt")
     else:
         print("El árbol no se ha construido correctamente.")
