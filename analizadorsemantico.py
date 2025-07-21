@@ -109,6 +109,8 @@ def evalLectura(arbol, estado):
   valEscribir = input((arbol.children[2].lexema)[1:-1])
   try:
     valEscribir = float(valEscribir)
+    if valEscribir.is_integer():
+      valEscribir = int(valEscribir)
   except:
     raise Exception('Se esperaba un real')
   i = recuperarEstado(idtipo, estado)
@@ -122,10 +124,11 @@ def evalEscritura(arbol,estado):
 def evalLista(arbol,estado):
   cadena=""
   parte = evalVarLista(arbol.children[0],estado)
-  if isinstance(parte, np.ndarray):
-    parte = '\n' + str(parte) + '\n'
-  else:
-    parte = str(parte)
+  # if isinstance(parte, np.ndarray):
+  #   parte = '\n' + str(parte) + '\n'
+  # else:
+  #   parte = str(parte)
+  parte = str(parte)
   resto = str(evalAux2(arbol.children[1],estado))   
   if not(resto == 'None'):
     cadena = parte + resto
@@ -238,20 +241,14 @@ def evalSub3(arbol,estado,op1):
       op2 = float(evalEAR2(arbol.children[1],estado))
       op1 = op1 ** op2
       return op1
-# def evalSub3(arbol,estado,op1):
-#   if arbol.children[0].name == 'epsilon':
-#     return op1
-#   if type(op1) is not list:
-#     op1 = float(op1)
-#   if arbol.children[0].name == 'potencia':
-#     op2 =float(evalEAR2(arbol.children[1],estado))
-#     op1 = op1 ** op2
-#     return op1
     
 #<EAR3>::= '('<ExpArit>')' |  'Transpose’ ‘(' <ExpArit> ')' | 'Size’ ‘(' <ExpArit> ',' 'constantereal' ')' | ‘id’ <EAR4> | ‘ConstanteReal’ | ‘-’<EAR3> | <constanteMatriz>
 def evalEAR3(arbol,estado):
   if arbol.children[0].name == 'constantereal':
-    return float(arbol.children[0].lexema)
+    aux = float(arbol.children[0].lexema)
+    if aux.is_integer():
+      aux = int(aux)
+    return aux
   elif arbol.children[0].name == 'constantematriz':
     return evalconstanteMatriz(arbol.children[0],estado)
   elif arbol.children[0].name == 'size':
@@ -295,7 +292,10 @@ def evalconstanteMatriz(arbol,estado):
 
 # esta funcion devuelve la matriz de lexemas de un elemento
 def matrizLexema(elemento):
-  return float(elemento.lexema)
+  aux = float(elemento.lexema)
+  if aux.is_integer():
+    aux = int(aux)
+  return aux
 
 #<Filas>::=  ‘[‘<listaNumeros>’]’ <aux4>
 def evalFilas(arbol,estado,matriz):
